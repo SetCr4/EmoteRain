@@ -101,7 +101,8 @@ namespace EmoteRain
 
             List<string> emoteIDArray = new List<string>();
 
-            if (emoteIDs.Split('=').Length < 2) return emoteIDArray.ToArray();
+            if (emoteIDs.Split('=')[1] == "") return emoteIDArray.ToArray();
+            Log(emoteIDs.Split('=').Length);
             string[] emotesWithIndex = emoteIDs.Split('=')[1].Split('/');
             foreach (string e in emotesWithIndex)
             {

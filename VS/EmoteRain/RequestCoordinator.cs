@@ -5,6 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static EmoteRain.Logger;
+using PS_Prefab_Pair = System.ValueTuple<System.Collections.Generic.Dictionary<string, EmoteRain.TimeoutScript>, UnityEngine.GameObject>;
 
 namespace EmoteRain
 {
@@ -21,7 +22,7 @@ namespace EmoteRain
 
         internal static Action<string> EmoteQueue;
 
-        private static Dictionary<Mode, ValueTuple<Dictionary<string, GameObject>, GameObject>> particleSystems = new Dictionary<Mode, ValueTuple<Dictionary<string, GameObject>, GameObject>>();
+        private static Dictionary<Mode, PS_Prefab_Pair> particleSystems = new Dictionary<Mode, PS_Prefab_Pair>();
 
         private static Scene myScene
         {
@@ -42,23 +43,24 @@ namespace EmoteRain
         internal static void OnLoad()
         {
             Log("in OnLoad()");
-            Log();
             AssetBundle assetBundle = AssetBundle.LoadFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("EmoteRain.emoterain"));
-            assetBundle.LoadAllAssets();
+            //assetBundle.LoadAllAssets();
             EmoteQueue = MessageCallback;
-            Log(assetBundle.GetAllAssetNames());
-            Log(assetBundle.GetAllScenePaths());
-            Log("------" + assetBundle.LoadAssetWithSubAssets("ERParticleSystem").Length);
-            Log();
 
             particleSystems[Mode.Menu] =
-                new ValueTuple<Dictionary<string, GameObject>, GameObject>(new Dictionary<string, GameObject>(),
-                assetBundle.LoadAsset<GameObject>("ERParticleSystemMenu Variant"));
-            Log(particleSystems[Mode.Menu].Item2 ? particleSystems[Mode.Menu].Item2.GetFullPath() : "null");
+                new PS_Prefab_Pair(
+                    new Dictionary<string, TimeoutScript>(),
+                    assetBundle.LoadAsset<GameObject>("ERParticleSystemMenu Variant")
+                )
+            ;
+            Log("Prefab at: " + (particleSystems[Mode.Menu].Item2 ? particleSystems[Mode.Menu].Item2.GetFullPath() : "null"));
             particleSystems[Mode.Play] =
-                new ValueTuple<Dictionary<string, GameObject>, GameObject>(new Dictionary<string, GameObject>(),
-                assetBundle.LoadAsset<GameObject>("ERParticleSystemPlaySpace Variant"));
-            Log(particleSystems[Mode.Play].Item2 ? particleSystems[Mode.Play].Item2.GetFullPath() : "null");
+                new PS_Prefab_Pair(
+                    new Dictionary<string, TimeoutScript>(),
+                    assetBundle.LoadAsset<GameObject>("ERParticleSystemPlaySpace Variant")
+                )
+            ;
+            Log("Prefab at: " + (particleSystems[Mode.Play].Item2 ? particleSystems[Mode.Play].Item2.GetFullPath() : "null"));
         }
 
         /// <summary>
@@ -80,36 +82,30 @@ namespace EmoteRain
 
             Log($"Continuing after {Time.time - time} seconds...");
 
-            GameObject prefabClone;
-            ValueTuple<Dictionary<string, GameObject>, GameObject> ps_Prefab_Pair = particleSystems[mode];
+            TimeoutScript cloneTimer;
+            PS_Prefab_Pair ps_Prefab_Pair = particleSystems[mode];
 
             if (!ps_Prefab_Pair.Item1.ContainsKey(id))
             {
-                Log("Hi");
                 Log(ps_Prefab_Pair.Item2 ? ps_Prefab_Pair.Item2.GetFullPath() : "null");
-                prefabClone = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2);
-                Log("Hey");
-                prefabClone.GetComponent<TimeoutScript>().key = id;
-                prefabClone.GetComponent<TimeoutScript>().mode = mode;
-                SceneManager.MoveGameObjectToScene(prefabClone, myScene);
-                ps_Prefab_Pair.Item1.Add(id, prefabClone);
-                Log("Bye");
+                cloneTimer = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2).GetComponent<TimeoutScript>();
+                cloneTimer.key = id;
+                cloneTimer.mode = mode;
+                SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);
+                ps_Prefab_Pair.Item1.Add(id, cloneTimer);
             }
             else
             {
-                Log("Ho");
-                prefabClone = ps_Prefab_Pair.Item1[id];
+                cloneTimer = ps_Prefab_Pair.Item1[id];
             }
-            prefabClone.GetComponent<TimeoutScript>().resetTimer();
-            Log();
+            cloneTimer.resetTimer();
             Log("Assigning...");
-            prefabClone.GetComponent<ParticleSystemRenderer>().material.mainTexture = cachedSpriteData.sprite.texture;
-            //prefabClone.GetComponent<ParticleSystemRenderer>().material = SceneManager.GetSceneByPath("MenuEnvironment").GetRootGameObjects()[0].transform.Find("MenuPlayersPlace/Feet").GetComponent<Renderer>().material;
+            cloneTimer.PSR.material.mainTexture = cachedSpriteData.sprite.texture;
             Log("Finished assigning!");
 
             Log("Sprite emited! " + cachedSpriteData.sprite.name);
 
-            SharedCoroutineStarter.instance.StartCoroutine(FuckUnity(prefabClone.GetComponent<ParticleSystem>()));
+            SharedCoroutineStarter.instance.StartCoroutine(FuckUnity(cloneTimer.PS));
 
         }
 
@@ -143,8 +139,6 @@ namespace EmoteRain
         {
             yield return new WaitForEndOfFrame();
             ps?.Emit(1);
-
-            Log(ps?.particleCount);
         }
         internal static void UnregisterPS(string key, Mode mode)
         {

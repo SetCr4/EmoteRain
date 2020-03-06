@@ -14,6 +14,26 @@ namespace EmoteRain
         private float timeoutTimer = 0;
         internal string key;
         internal Mode mode;
+        internal ParticleSystem PS {
+            get {
+                if(_PS == null) {
+                    _PS = gameObject.GetComponent<ParticleSystem>();
+                }
+                return _PS;
+            }
+        }
+        private ParticleSystem _PS;
+        internal ParticleSystemRenderer PSR {
+            get {
+                if(_PSR == null) {
+                    _PSR = gameObject.GetComponent<ParticleSystemRenderer>();
+                }
+                return _PSR;
+            }
+        }
+        private ParticleSystemRenderer _PSR;
+
+
 
         private void Update()
         {
