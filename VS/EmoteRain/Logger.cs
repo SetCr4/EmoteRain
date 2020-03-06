@@ -25,7 +25,6 @@ namespace EmoteRain {
         internal static void Log(string message = "<3", Level level = Level.Info) {
             logger.Log(level, message);
         }
-
         internal static void Log(object message, Level level = Level.Info) {
             try {
                 Log(message.ToString(), level);
@@ -33,7 +32,6 @@ namespace EmoteRain {
                 Log(e, Level.Error);
             }
         }
-
         internal static void Log(Component message, Level level = Level.Info) {
             try {
                 Log(message.GetFullPath(), level);

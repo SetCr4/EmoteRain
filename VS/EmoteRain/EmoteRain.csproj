@@ -107,13 +107,15 @@
     <EmbeddedResource Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BuildTargets.targets" />
     <None Include="CreateJunctions.bat" />
     <EmbeddedResource Include="emoterain" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="BuildTargets.targets" />
   <PropertyGroup>
-    <PostBuildEvent>md "D:\SteamLibrary_SlowMode\steamapps\common\Beat Saber\IPA\Pending\Plugins"
-copy /y "C:\Users\Lucas\source\repos\EmoteRain\EmoteRain\bin\Release\EmoteRain.dll" "D:\SteamLibrary_SlowMode\steamapps\common\Beat Saber\IPA\Pending\Plugins"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

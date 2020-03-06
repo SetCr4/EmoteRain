@@ -1,0 +1,36 @@
+ManifestFileVersion: 0
+CRC: 904995739
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 50bb2a48da6a76ed89a1ce0b1f78b06a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: ad9dd3f2ba02555134b68550f2f28338
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: -755407114, guid: 1b132e239eed31447b1c3ba345059abc, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+Assets:
+- Assets/Materials/test1.mat
+- Assets/Export/ERParticleSystemMenu Variant.prefab
+- Assets/Export/ERParticleSystemPlaySpace Variant.prefab
+Dependencies: []

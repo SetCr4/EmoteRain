@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 1898390319
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: emoterain
+      Dependencies: {}
