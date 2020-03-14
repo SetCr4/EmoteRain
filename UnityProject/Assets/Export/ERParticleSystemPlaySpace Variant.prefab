@@ -22,10 +22,15 @@ PrefabInstance:
       propertyPath: ShapeModule.m_Scale.y
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 4069693038853071673, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
+        type: 3}
+      propertyPath: ShapeModule.m_Scale.z
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4069693038853071674, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
       propertyPath: m_Name
-      value: ERParticleSystemPlaySpace
+      value: ERParticleSystemPlaySpace Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4069693038853071678, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
@@ -35,7 +40,7 @@ PrefabInstance:
     - target: {fileID: 4069693038853071678, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10
+      value: 11.5
       objectReference: {fileID: 0}
     - target: {fileID: 4069693038853071678, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}

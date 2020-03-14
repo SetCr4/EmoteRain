@@ -104,12 +104,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="emoterain" />
     <EmbeddedResource Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildTargets.targets" />
     <None Include="CreateJunctions.bat" />
-    <EmbeddedResource Include="emoterain" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildTargets.targets" />
