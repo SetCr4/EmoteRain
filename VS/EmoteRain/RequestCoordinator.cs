@@ -63,9 +63,6 @@ namespace EmoteRain
             Log("Prefab at: " + (particleSystems[Mode.Play].Item2 ? particleSystems[Mode.Play].Item2.GetFullPath() : "null"));
         }
 
-        /// <summary>
-        /// Called every frame if the script is enabled.
-        /// </summary>
         private static void MessageCallback(string id)
         {
             Log("Received EmoteID: " + id);
@@ -104,7 +101,6 @@ namespace EmoteRain
             {
                 cloneTimer = ps_Prefab_Pair.Item1[id];
             }
-            cloneTimer.resetTimer();
             Log("Assigning...");
             cloneTimer.PSR.material.mainTexture = cachedSpriteData.sprite.texture;
             Log("Finished assigning!");
@@ -114,7 +110,7 @@ namespace EmoteRain
             SharedCoroutineStarter.instance.StartCoroutine(FuckUnity(cloneTimer.PS));
 
         }
-
+        //Needs rework...
         internal static void EnvironmentSwitched(string scene, SceneLoadMode sceneLoadMode)
         {
             if (mode == Mode.None && scene == "MenuEnvironment" && sceneLoadMode == SceneLoadMode.Load)

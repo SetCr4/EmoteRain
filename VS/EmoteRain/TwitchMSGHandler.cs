@@ -55,6 +55,7 @@ namespace EmoteRain
 
         private static void queueEmoteSprites(string[] emoteID)
         {
+
             foreach (string e in emoteID)
             {
                 Log("Trying to enqueue EmoteID " + e);
