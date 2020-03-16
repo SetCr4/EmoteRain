@@ -24,7 +24,7 @@ namespace EmoteRain
 
         private static Dictionary<Mode, PS_Prefab_Pair> particleSystems = new Dictionary<Mode, PS_Prefab_Pair>();
 
-        private static Scene myScene
+        internal static Scene myScene
         {
             get
             {

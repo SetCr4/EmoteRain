@@ -7,8 +7,11 @@ using IPA.Config;
 using IPA.Utilities;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using BeatSaberMarkupLanguage.Settings;
 using IPALogger = IPA.Logging.Logger;
 using static EmoteRain.Logger;
+using System.Reflection;
+using System.IO;
 
 namespace EmoteRain
 {
@@ -16,6 +19,7 @@ namespace EmoteRain
     internal class Plugin : IBeatSaberPlugin
     {
         private static bool init;
+
 
         internal static string Name => "EmoteRain";
 
@@ -37,14 +41,15 @@ namespace EmoteRain
                 init = true;
                 SharedCoroutineStarter.instance.StartCoroutine(WaitForMenu());
             }
-            if(scene.name.Contains("Environment"))
+            if (scene.name.Contains("Environment"))
             {
-                RequestCoordinator.EnvironmentSwitched(scene.name,SceneLoadMode.Load);
+                RequestCoordinator.EnvironmentSwitched(scene.name, SceneLoadMode.Load);
             }
         }
         private static IEnumerator<WaitUntil> WaitForMenu()
         {
-            yield return new WaitUntil(() => {
+            yield return new WaitUntil(() =>
+            {
                 Scene scene1, scene2, scene3, scene4;
                 scene1 = SceneManager.GetSceneByName("MenuCore");
                 scene2 = SceneManager.GetSceneByName("MenuEnvironment");
@@ -64,12 +69,16 @@ namespace EmoteRain
             RequestCoordinator.OnLoad();
         }
 
-        public void OnApplicationStart(){}
-        public void OnApplicationQuit(){}
-        public void OnFixedUpdate(){}
-        public void OnUpdate(){}
-        public void OnActiveSceneChanged(Scene prevScene, Scene nextScene){}
-        public void OnSceneUnloaded(Scene scene){
+        public void OnApplicationStart()
+        {
+            BSMLSettings.instance.AddSettingsMenu("EmoteRain", "EmoteRain.Views.settings.bsml", SettingsViewController.instance);
+        }
+        public void OnApplicationQuit() { }
+        public void OnFixedUpdate() { }
+        public void OnUpdate() { }
+        public void OnActiveSceneChanged(Scene prevScene, Scene nextScene) { }
+        public void OnSceneUnloaded(Scene scene)
+        {
             if (scene.name.Contains("Environment"))
             {
                 RequestCoordinator.EnvironmentSwitched(scene.name, SceneLoadMode.Unload);

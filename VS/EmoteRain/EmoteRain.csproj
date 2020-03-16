@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BSML, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\BSML.dll</HintPath>
+    </Reference>
     <Reference Include="EnhancedStreamChat">
       <HintPath>D:\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\EnhancedStreamChat.dll</HintPath>
     </Reference>
@@ -92,6 +96,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SettingsViewController.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="SceneLoadMode.cs" />
     <Compile Include="TimeoutScript.cs" />
@@ -110,6 +115,7 @@
   <ItemGroup>
     <None Include="BuildTargets.targets" />
     <None Include="CreateJunctions.bat" />
+    <EmbeddedResource Include="Views\settings.bsml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildTargets.targets" />
