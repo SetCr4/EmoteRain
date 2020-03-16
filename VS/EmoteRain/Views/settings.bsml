@@ -1,0 +1,6 @@
+<scrollable-settings-container>
+  <bool-setting text='Rain in menu' value='menu-rain' hover-hint='Enables EmoteRain in the menu'></bool-setting>
+  <slider-setting text='Emote Size in menu' min='0.1' max='5' increment='.1' value='size-in-menu' integer-only='false' hover-hint='Size of every emote in the menu'></slider-setting>
+  <bool-setting text='Rain in songs' value='song-rain' hover-hint='Enables EmoteRain in songs'></bool-setting>
+  <slider-setting text='Emote Size in song' min='0.1' max='5' increment='.1' value='size-in-song' integer-only='false' hover-hint='Size of every emote in songs'></slider-setting>
+</scrollable-settings-container>
