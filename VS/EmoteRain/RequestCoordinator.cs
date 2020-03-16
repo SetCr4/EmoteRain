@@ -20,7 +20,7 @@ namespace EmoteRain
 
         private static Mode mode;
 
-        internal static Action<string> EmoteQueue;
+        internal static Action<string, byte> EmoteQueue;
 
         private static Dictionary<Mode, PS_Prefab_Pair> particleSystems = new Dictionary<Mode, PS_Prefab_Pair>();
 
@@ -63,16 +63,15 @@ namespace EmoteRain
             Log("Prefab at: " + (particleSystems[Mode.Play].Item2 ? particleSystems[Mode.Play].Item2.GetFullPath() : "null"));
         }
 
-        private static void MessageCallback(string id)
+        private static void MessageCallback(string id, byte count)
         {
-            Log("Received EmoteID: " + id);
             if ((mode == Mode.Menu && Settings.menuRain) || (mode == Mode.Play && Settings.songRain))
             {
-                SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(id));
+                SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(id, count));
             }
         }
 
-        private static IEnumerator<WaitUntil> WaitForCollection(string id)
+        private static IEnumerator<WaitUntil> WaitForCollection(string id, byte count)
         {
             float time = Time.time;
             Log("Id: " + id);
@@ -105,9 +104,9 @@ namespace EmoteRain
             cloneTimer.PSR.material.mainTexture = cachedSpriteData.sprite.texture;
             Log("Finished assigning!");
 
-            Log("Sprite emited! " + cachedSpriteData.sprite.name);
+            cloneTimer.Emit(count);
 
-            SharedCoroutineStarter.instance.StartCoroutine(FuckUnity(cloneTimer.PS));
+            Log("ParticleSystems notified! " + cachedSpriteData.sprite.name);
 
         }
         //Needs rework...
@@ -135,12 +134,6 @@ namespace EmoteRain
                     mode = Mode.Menu;
                 }
             }
-        }
-
-        private static IEnumerator<WaitForEndOfFrame> FuckUnity(ParticleSystem ps)
-        {
-            yield return new WaitForEndOfFrame();
-            ps?.Emit(1);
         }
         internal static void UnregisterPS(string key, Mode mode)
         {

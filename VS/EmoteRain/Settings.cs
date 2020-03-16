@@ -96,20 +96,20 @@ namespace EmoteRain
         private static float? _songSize;
 
         [UIValue("emote-delay")]
-        public static byte emoteDelay {
+        public static int emoteDelay {
             get {
                 if(_emoteDelay == null) {
-                    _emoteDelay = (byte)Plugin.config.GetInt("Settings", "SongSize", 2, true);
+                    _emoteDelay = Plugin.config.GetInt("Settings", "EmoteDelay", 2, true);
                 }
                 return _emoteDelay.Value;
             }
             set {
                 if(value != _emoteDelay.Value) {
-                    Plugin.config.SetInt("Settings", "SongSize", value);
+                    Plugin.config.SetInt("Settings", "EmoteDelay", value);
                     _emoteDelay = value;
                 }
             }
         }
-        private static byte? _emoteDelay;
+        private static int? _emoteDelay;
     }
 }

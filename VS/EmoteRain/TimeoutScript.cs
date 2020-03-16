@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static EmoteRain.Logger;
 
 namespace EmoteRain {
     internal class TimeoutScript:MonoBehaviour {
@@ -13,8 +14,8 @@ namespace EmoteRain {
         internal string key;
         internal Mode mode;
         private bool ready;
-        private ushort queue;
-        private byte frameCount;
+        private byte queue;
+        private byte frameCount = (byte)Settings.emoteDelay;
         internal ParticleSystem PS {
             get {
                 if(_PS == null) {
@@ -34,29 +35,35 @@ namespace EmoteRain {
         }
         private ParticleSystemRenderer _PSR;
 
-        internal void Emit(ushort amount) {
+        internal void Emit(byte amount) {
             if(amount > 0) {
                 queue += amount;
-                StartCoroutine("Emit");
+                StartCoroutine(Emit());
             }
         }
         private IEnumerator<WaitForFixedUpdate> Emit() {
-            if(!ready) {
-                yield return new WaitForFixedUpdate();
-                ready = true;
-            }
-            if(queue > 0) {
-                timeoutTimer = 0;
-                if(frameCount >= Settings.emoteDelay) {
-                    frameCount = 0;
-                    PS.Emit(1);
+            while(true) {
+                if(!ready) {
+                    yield return new WaitForFixedUpdate();
+                    ready = true;
                 }
-                frameCount++;
-            } else {
-                frameCount = 0;
-                timeoutTimer += Time.fixedDeltaTime;
-                if(timeoutTimer > timeLimit) {
-                    RequestCoordinator.UnregisterPS(key, mode);
+                if(queue > 0) {
+                    timeoutTimer = 0;
+                    if(frameCount >= Settings.emoteDelay) {
+                        frameCount = 0;
+                        PS.Emit(1);
+                        queue--;
+                    }
+                    frameCount++;
+                    yield return new WaitForFixedUpdate();
+                } else {
+                    frameCount = 0;
+                    timeoutTimer += Time.fixedDeltaTime;
+                    yield return new WaitForFixedUpdate();
+                    if(timeoutTimer > timeLimit) {
+                        RequestCoordinator.UnregisterPS(key, mode);
+                        yield break;
+                    }
                 }
             }
         }
