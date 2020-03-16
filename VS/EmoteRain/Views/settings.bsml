@@ -3,5 +3,5 @@
   <slider-setting text='Emote Size in menu' min='0.1' max='5' increment='.1' value='size-in-menu' integer-only='false' hover-hint='Size of every emote in the menu'></slider-setting>
   <bool-setting text='Rain in songs' value='song-rain' hover-hint='Enables EmoteRain in songs'></bool-setting>
   <slider-setting text='Emote Size in song' min='0.1' max='5' increment='.1' value='size-in-song' integer-only='false' hover-hint='Size of every emote in songs'></slider-setting>
-  <slider-setting text='Delay between same emote' min='2' max='255' increment='1' value='emote-delay' integer-only='true' hover-hint='In physics frames'></slider-setting>
+  <slider-setting text='Delay between same emote' min='1' max='100' increment='1' value='emote-delay' integer-only='true' hover-hint='In physics frames'></slider-setting>
 </scrollable-settings-container>

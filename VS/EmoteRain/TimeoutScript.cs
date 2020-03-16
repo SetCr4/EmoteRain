@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using static EmoteRain.Logger;
 
@@ -10,12 +6,11 @@ namespace EmoteRain {
     internal class TimeoutScript:MonoBehaviour {
         [SerializeField]
         private float timeLimit = 15.0f;
-        private float timeoutTimer = 0;
         internal string key;
         internal Mode mode;
-        private bool ready;
         private byte queue;
-        private byte frameCount = (byte)Settings.emoteDelay;
+        private bool timingOut;
+        private IEnumerator<YieldInstruction> coroutine;
         internal ParticleSystem PS {
             get {
                 if(_PS == null) {
@@ -38,34 +33,43 @@ namespace EmoteRain {
         internal void Emit(byte amount) {
             if(amount > 0) {
                 queue += amount;
-                StartCoroutine(Emit());
+                if(coroutine == null) {
+                    coroutine = Init();
+                    StartCoroutine(coroutine);
+                }else if(timingOut){
+                    StopCoroutine(coroutine);
+                    timingOut = false;
+                    coroutine = Emit();
+                    StartCoroutine(coroutine);
+                }
             }
         }
+        private IEnumerator<WaitForEndOfFrame> Init() {
+            yield return new WaitForEndOfFrame();
+            coroutine = Emit();
+            StartCoroutine(coroutine);
+            yield break;
+        }
         private IEnumerator<WaitForFixedUpdate> Emit() {
-            while(true) {
-                if(!ready) {
-                    yield return new WaitForFixedUpdate();
-                    ready = true;
-                }
-                if(queue > 0) {
-                    timeoutTimer = 0;
-                    if(frameCount >= Settings.emoteDelay) {
-                        frameCount = 0;
-                        PS.Emit(1);
-                        queue--;
-                    }
-                    frameCount++;
-                    yield return new WaitForFixedUpdate();
-                } else {
+            byte frameCount = (byte)Settings.emoteDelay;
+            while(queue > 0) {
+                if(frameCount >= Settings.emoteDelay) {
                     frameCount = 0;
-                    timeoutTimer += Time.fixedDeltaTime;
-                    yield return new WaitForFixedUpdate();
-                    if(timeoutTimer > timeLimit) {
-                        RequestCoordinator.UnregisterPS(key, mode);
-                        yield break;
-                    }
+                    PS.Emit(1);
+                    queue--;
                 }
+                frameCount++;
+                yield return new WaitForFixedUpdate();
             }
+            coroutine = TimeOut();
+            StartCoroutine(coroutine);
+            yield break;
+        }
+        private IEnumerator<WaitForSeconds> TimeOut() {
+            timingOut = true;
+            yield return new WaitForSeconds(timeLimit);
+            RequestCoordinator.UnregisterPS(key, mode);
+            yield break;
         }
     }
 }
