@@ -13,7 +13,7 @@ using StreamCore.Utils;
 using StreamCore.YouTube;
 using StreamCore.Twitch;
 using static EmoteRain.Logger;
-
+using EnhancedStreamChat.Textures;
 
 namespace EmoteRain
 {
@@ -34,9 +34,11 @@ namespace EmoteRain
         private static void MSGHandler(TwitchMessage twitchMsg)
         {
             Log("Got Twitch Msg!\nrawMessage: " + twitchMsg.rawMessage);
+            Log("message: " + twitchMsg.message);
             string et = getEmoteTagFromMsg(twitchMsg.rawMessage);
+            string msg = twitchMsg.message;
             Log("EmoteTag: " + et);
-            string[] eids = arraify(et);
+            string[] eids = combineAllIDs(getTwitchEmoteIDsFromTag(et),getBTTVEmoteIDsFromMsg(msg),getFFZEmoteIDsFromMsg(msg));
             if (eids.Length > 0)
             {
                 Log("EmoteIDs:");
@@ -91,7 +93,33 @@ namespace EmoteRain
             return "emotes=";
         }
 
-        private static string[] arraify(string emoteIDs)
+        private static string[] getBTTVEmoteIDsFromMsg(string msg)
+        {
+            List<string> EmoteIDList = new List<string>();
+            string[] words = msg.Split(' ');
+            foreach(string e in words)
+            {
+                string str = "";
+                ImageDownloader.BTTVEmoteIDs.TryGetValue(e,out str);
+                if (str != "") EmoteIDList.Add("B" + str);
+            }
+            return EmoteIDList.ToArray();
+        }
+
+        private static string[] getFFZEmoteIDsFromMsg(string msg)
+        {
+            List<string> EmoteIDList = new List<string>();
+            string[] words = msg.Split(' ');
+            foreach (string e in words)
+            {
+                string str = "";
+                ImageDownloader.FFZEmoteIDs.TryGetValue(e, out str);
+                if (str != "") EmoteIDList.Add("F" + str);
+            }
+            return EmoteIDList.ToArray();
+        }
+
+        private static string[] getTwitchEmoteIDsFromTag(string emoteIDs)
         {
             //  bspInput
             //      emotes=301290052:29-35/301242724:37-42/115845:44-52/106293:54-60
@@ -110,10 +138,23 @@ namespace EmoteRain
                 string[] inLine = e.Split(':')[1].Split(',');
                 foreach (var _ in inLine)
                 {
-                    emoteIDArray.Add(currentEmoteID);
+                    emoteIDArray.Add("T" + currentEmoteID);
                 }
             }
             return emoteIDArray.ToArray();
+        }
+
+        private static string[] combineAllIDs(params string[][] EmoteIDArr)
+        {
+            List<string> combined = new List<string>();
+            foreach (string[] e in EmoteIDArr)
+            {
+                foreach (string e2 in e)
+                {
+                    combined.Add(e2);
+                }
+            }
+            return combined.ToArray();
         }
     }
 }

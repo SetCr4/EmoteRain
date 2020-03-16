@@ -78,7 +78,7 @@ namespace EmoteRain
             Log("Id: " + id);
 
             CachedSpriteData cachedSpriteData = default;
-            yield return new WaitUntil(() => ImageDownloader.CachedTextures.TryGetValue("T" + id, out cachedSpriteData) && mode != Mode.None);
+            yield return new WaitUntil(() => ImageDownloader.CachedTextures.TryGetValue(id, out cachedSpriteData) && mode != Mode.None);
 
             Log($"Continuing after {Time.time - time} seconds...");
 
