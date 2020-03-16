@@ -69,7 +69,10 @@ namespace EmoteRain
         private static void MessageCallback(string id)
         {
             Log("Received EmoteID: " + id);
-            SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(id));
+            if ((mode == Mode.Menu && Settings.menuRain) || (mode == Mode.Play && Settings.songRain))
+            {
+                SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(id));
+            }
         }
 
         private static IEnumerator<WaitUntil> WaitForCollection(string id)
@@ -89,6 +92,9 @@ namespace EmoteRain
             {
                 Log(ps_Prefab_Pair.Item2 ? ps_Prefab_Pair.Item2.GetFullPath() : "null");
                 cloneTimer = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2).GetComponent<TimeoutScript>();
+                var main = cloneTimer.PS.main;
+                if (mode == Mode.Menu) main.startSize = Settings.menuSize;
+                if (mode == Mode.Play) main.startSize = Settings.songSize;
                 cloneTimer.key = id;
                 cloneTimer.mode = mode;
                 SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);

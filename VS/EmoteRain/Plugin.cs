@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using IPA;
-using IPA.Config;
 using IPA.Utilities;
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -12,6 +11,7 @@ using IPALogger = IPA.Logging.Logger;
 using static EmoteRain.Logger;
 using System.Reflection;
 using System.IO;
+using BS_Utils.Utilities;
 
 namespace EmoteRain
 {
@@ -19,7 +19,7 @@ namespace EmoteRain
     internal class Plugin : IBeatSaberPlugin
     {
         private static bool init;
-
+        internal static Config config = new Config("EmoteRain");
 
         internal static string Name => "EmoteRain";
 
@@ -71,7 +71,7 @@ namespace EmoteRain
 
         public void OnApplicationStart()
         {
-            BSMLSettings.instance.AddSettingsMenu("EmoteRain", "EmoteRain.Views.settings.bsml", SettingsViewController.instance);
+            BSMLSettings.instance.AddSettingsMenu("EmoteRain", "EmoteRain.Views.settings.bsml", Settings.instance);
         }
         public void OnApplicationQuit() { }
         public void OnFixedUpdate() { }
