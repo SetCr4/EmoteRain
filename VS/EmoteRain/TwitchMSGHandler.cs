@@ -55,6 +55,14 @@ namespace EmoteRain
 
         private static void queueEmoteSprites(string[] emoteID)
         {
+            var query = emoteID.GroupBy(
+                x => x,
+                x => x,
+                (id, arr) => new
+                {
+                    Key = id,
+                    Count = arr.Count()
+                });
 
             foreach (string e in emoteID)
             {
