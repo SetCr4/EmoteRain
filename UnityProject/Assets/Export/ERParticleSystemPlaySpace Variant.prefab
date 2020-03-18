@@ -1,16 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &3197858310739676171
+--- !u!1001 &3080148170145353760
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4069693038853071673, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
+        type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4069693038853071673, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
+        type: 3}
+      propertyPath: ShapeModule.m_Scale.x
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4069693038853071673, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
+        type: 3}
+      propertyPath: ShapeModule.m_Scale.y
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4069693038853071673, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
+        type: 3}
+      propertyPath: ShapeModule.m_Scale.z
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4069693038853071674, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
       propertyPath: m_Name
-      value: ERParticleSystemMenu
+      value: ERParticleSystemPlaySpace Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4069693038853071678, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
@@ -20,12 +40,12 @@ PrefabInstance:
     - target: {fileID: 4069693038853071678, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10
+      value: 11.5
       objectReference: {fileID: 0}
     - target: {fileID: 4069693038853071678, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.5
+      value: 14.5
       objectReference: {fileID: 0}
     - target: {fileID: 4069693038853071678, guid: fd8bdeef0ecd94f4c9c7b15792b8ca0e,
         type: 3}
