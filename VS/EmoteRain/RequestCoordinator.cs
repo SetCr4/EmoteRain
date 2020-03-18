@@ -20,7 +20,7 @@ namespace EmoteRain
 
         private static Mode mode;
 
-        internal static Action<string> EmoteQueue;
+        internal static Action<string, byte> EmoteQueue;
 
         private static Dictionary<Mode, PS_Prefab_Pair> particleSystems = new Dictionary<Mode, PS_Prefab_Pair>();
 
@@ -63,22 +63,21 @@ namespace EmoteRain
             Log("Prefab at: " + (particleSystems[Mode.Play].Item2 ? particleSystems[Mode.Play].Item2.GetFullPath() : "null"));
         }
 
-        /// <summary>
-        /// Called every frame if the script is enabled.
-        /// </summary>
-        private static void MessageCallback(string id)
+        private static void MessageCallback(string id, byte count)
         {
-            Log("Received EmoteID: " + id);
-            SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(id));
+            if ((mode == Mode.Menu && Settings.menuRain) || (mode == Mode.Play && Settings.songRain))
+            {
+                SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(id, count));
+            }
         }
 
-        private static IEnumerator<WaitUntil> WaitForCollection(string id)
+        private static IEnumerator<WaitUntil> WaitForCollection(string id, byte count)
         {
             float time = Time.time;
             Log("Id: " + id);
 
             CachedSpriteData cachedSpriteData = default;
-            yield return new WaitUntil(() => ImageDownloader.CachedTextures.TryGetValue("T" + id, out cachedSpriteData) && mode != Mode.None);
+            yield return new WaitUntil(() => ImageDownloader.CachedTextures.TryGetValue(id, out cachedSpriteData) && mode != Mode.None);
 
             Log($"Continuing after {Time.time - time} seconds...");
 
@@ -89,6 +88,9 @@ namespace EmoteRain
             {
                 Log(ps_Prefab_Pair.Item2 ? ps_Prefab_Pair.Item2.GetFullPath() : "null");
                 cloneTimer = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2).GetComponent<TimeoutScript>();
+                var main = cloneTimer.PS.main;
+                if (mode == Mode.Menu) main.startSize = Settings.menuSize;
+                if (mode == Mode.Play) main.startSize = Settings.songSize;
                 cloneTimer.key = id;
                 cloneTimer.mode = mode;
                 SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);
@@ -98,17 +100,16 @@ namespace EmoteRain
             {
                 cloneTimer = ps_Prefab_Pair.Item1[id];
             }
-            cloneTimer.resetTimer();
             Log("Assigning...");
             cloneTimer.PSR.material.mainTexture = cachedSpriteData.sprite.texture;
             Log("Finished assigning!");
 
-            Log("Sprite emited! " + cachedSpriteData.sprite.name);
+            cloneTimer.Emit(count);
 
-            SharedCoroutineStarter.instance.StartCoroutine(FuckUnity(cloneTimer.PS));
+            Log("ParticleSystems notified! " + cachedSpriteData.sprite.name);
 
         }
-
+        //Needs rework...
         internal static void EnvironmentSwitched(string scene, SceneLoadMode sceneLoadMode)
         {
             if (mode == Mode.None && scene == "MenuEnvironment" && sceneLoadMode == SceneLoadMode.Load)
@@ -133,12 +134,6 @@ namespace EmoteRain
                     mode = Mode.Menu;
                 }
             }
-        }
-
-        private static IEnumerator<WaitForEndOfFrame> FuckUnity(ParticleSystem ps)
-        {
-            yield return new WaitForEndOfFrame();
-            ps?.Emit(1);
         }
         internal static void UnregisterPS(string key, Mode mode)
         {
