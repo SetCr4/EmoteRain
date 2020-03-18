@@ -99,7 +99,7 @@ namespace EmoteRain
         public static int emoteDelay {
             get {
                 if(_emoteDelay == null) {
-                    _emoteDelay = Plugin.config.GetInt("Settings", "EmoteDelay", 2, true);
+                    _emoteDelay = Plugin.config.GetInt("Settings", "EmoteDelay", 8, true);
                 }
                 return _emoteDelay.Value;
             }
