@@ -74,7 +74,6 @@ namespace EmoteRain
         private static IEnumerator<WaitUntil> WaitForCollection(string id, byte count)
         {
             float time = Time.time;
-            Log("Id: " + id);
 
             CachedSpriteData cachedSpriteData = default;
             yield return new WaitUntil(() => ImageDownloader.CachedTextures.TryGetValue(id, out cachedSpriteData) && mode != Mode.None);
@@ -86,7 +85,6 @@ namespace EmoteRain
 
             if (!ps_Prefab_Pair.Item1.ContainsKey(id))
             {
-                Log(ps_Prefab_Pair.Item2 ? ps_Prefab_Pair.Item2.GetFullPath() : "null");
                 cloneTimer = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2).GetComponent<TimeoutScript>();
                 var main = cloneTimer.PS.main;
                 if (mode == Mode.Menu) main.startSize = Settings.menuSize;
@@ -100,13 +98,12 @@ namespace EmoteRain
             {
                 cloneTimer = ps_Prefab_Pair.Item1[id];
             }
-            Log("Assigning...");
+            Log("Assigning texture...");
             cloneTimer.PSR.material.mainTexture = cachedSpriteData.sprite.texture;
-            Log("Finished assigning!");
 
             cloneTimer.Emit(count);
 
-            Log("ParticleSystems notified! " + cachedSpriteData.sprite.name);
+            Log("ParticleSystems notified! ");
 
         }
         //Needs rework...

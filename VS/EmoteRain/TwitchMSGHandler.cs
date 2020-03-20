@@ -30,15 +30,18 @@ namespace EmoteRain {
 
         private static void MSGHandler(TwitchMessage twitchMsg) {
             Log("Got Twitch Msg!\nrawMessage: " + twitchMsg.rawMessage);
-            Log("message: " + twitchMsg.message);
             string et = getEmoteTagFromMsg(twitchMsg.rawMessage);
             string msg = twitchMsg.message;
-            Log("EmoteTag: " + et);
             string[] eids = combineAllIDs(getTwitchEmoteIDsFromTag(et),getBTTVEmoteIDsFromMsg(msg),getFFZEmoteIDsFromMsg(msg));
+
             if(eids.Length > 0) {
                 Log("EmoteIDs:");
                 foreach(string e in eids) {
-                    Log("ID {" + e + "} has link to https://static-cdn.jtvnw.net/emoticons/v1/" + e + "/2.0");
+                    string str = "Twitch";
+                    if (e.StartsWith("B")) str = "BTTV";
+                    else if (e.StartsWith("AB")) str = "Animated BTTV";
+                    else if (e.StartsWith("F")) str = "FFZ";
+                    Log(str + " Emote ID {" + e + "}");
                 }
                 Log("Sending to Emote-Queue...");
                 queueEmoteSprites(eids);
@@ -106,7 +109,7 @@ namespace EmoteRain {
             {
                 string str = "";
                 ImageDownloader.BTTVEmoteIDs.TryGetValue(e,out str);
-                if (str != "") EmoteIDList.Add("B" + str);
+                if (str != null) EmoteIDList.Add("B" + str);
             }
             return EmoteIDList.ToArray();
         }
@@ -119,7 +122,7 @@ namespace EmoteRain {
             {
                 string str = "";
                 ImageDownloader.FFZEmoteIDs.TryGetValue(e, out str);
-                if (str != "") EmoteIDList.Add("F" + str);
+                if (str != null) EmoteIDList.Add("F" + str);
             }
             return EmoteIDList.ToArray();
         }
