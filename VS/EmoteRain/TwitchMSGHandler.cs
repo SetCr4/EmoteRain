@@ -29,6 +29,11 @@ namespace EmoteRain {
         }
 
         private static void MSGHandler(TwitchMessage twitchMsg) {
+            if (twitchMsg.message.StartsWith(Settings.prefix))
+            {
+                CMDHandler(twitchMsg.message.Substring(4));
+                return;
+            }
             Log("Got Twitch Msg!\nrawMessage: " + twitchMsg.rawMessage);
             string et = getEmoteTagFromMsg(twitchMsg.rawMessage);
             string msg = twitchMsg.message;
@@ -47,6 +52,26 @@ namespace EmoteRain {
                 queueEmoteSprites(eids);
             } else {
                 Log("No Emotes in msg to queue!");
+            }
+        }
+
+        private static void CMDHandler(string cmd)
+        {
+            Log("got CMD: " + cmd);
+            switch(cmd)
+            {
+                case "toggle":
+                    if(Settings.menuRain || Settings.songRain)
+                    {
+                        Settings.menuRain = false;
+                        Settings.songRain = false;
+                    }
+                    else
+                    {
+                        Settings.menuRain = true;
+                        Settings.songRain = true;
+                    }
+                    break;
             }
         }
 

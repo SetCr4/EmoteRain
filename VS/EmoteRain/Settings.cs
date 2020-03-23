@@ -111,5 +111,28 @@ namespace EmoteRain
             }
         }
         private static int? _emoteDelay;
+
+        //This is just here if the prefix should be customizeable later on
+        //Or in other words: Doesn't do anything right now
+        public static string prefix 
+        { 
+            get 
+            { 
+                if(_prefix == null) 
+                {
+                    _prefix = Plugin.config.GetString("Settings", "Prefix", "!er", true);
+                }
+                return _prefix;
+            }
+            set 
+            {
+                if (value != _prefix)
+                {
+                    Plugin.config.SetString("Settings", "Prefix", value);
+                    _prefix = value;
+                }
+            }
+        }
+        private static string _prefix;
     }
 }
