@@ -14,6 +14,7 @@ using StreamCore.YouTube;
 using StreamCore.Twitch;
 using static EmoteRain.Logger;
 using EnhancedStreamChat.Textures;
+using System.Reflection;
 
 namespace EmoteRain {
     /// <summary>
@@ -23,6 +24,8 @@ namespace EmoteRain {
     internal class TwitchMSGHandler:ITwitchIntegration {
         public bool IsPluginReady { get; set; }
 
+        public static Dictionary<string, Command> cmds = new Dictionary<string, Command>();
+
         public TwitchMSGHandler() {
             TwitchMessageHandlers.PRIVMSG += MSGHandler;
             IsPluginReady = true;
@@ -31,7 +34,7 @@ namespace EmoteRain {
         private static void MSGHandler(TwitchMessage twitchMsg) {
             if (twitchMsg.message.StartsWith(Settings.prefix))
             {
-                CMDHandler(twitchMsg.message.Substring(4));
+                CMDHandler(twitchMsg.message.Substring(Settings.prefix.Length+1));
                 return;
             }
             Log("Got Twitch Msg!\nrawMessage: " + twitchMsg.rawMessage);
@@ -55,24 +58,33 @@ namespace EmoteRain {
             }
         }
 
-        private static void CMDHandler(string cmd)
+        private static void CMDinit()
         {
-            Log("got CMD: " + cmd);
-            switch(cmd)
+            Type parentType = typeof(Command);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Type[] types = assembly.GetTypes();
+            IEnumerable<Type> subclasses = types.Where(t => t.BaseType == parentType);
+            foreach(Type type in subclasses)
             {
-                case "toggle":
-                    if(Settings.menuRain || Settings.songRain)
-                    {
-                        Settings.menuRain = false;
-                        Settings.songRain = false;
-                    }
-                    else
-                    {
-                        Settings.menuRain = true;
-                        Settings.songRain = true;
-                    }
-                    break;
+                Command instance = (Command)Activator.CreateInstance(type);
+                cmds.Add(instance.trigger, instance);
             }
+        }
+
+        private static void CMDHandler(string fullCmd)
+        {
+            Log("got CMD: " + fullCmd);
+            string[] temp = fullCmd.Split(' ');
+            string cmd = temp[0];
+            string[] args = new string[temp.Length - 1];
+            for(int i = 0; i < args.Length; i++)
+            {
+                args[i] = temp[i + 1];
+            }
+            Command currentCommand = null;
+            cmds.TryGetValue(cmd, out currentCommand);
+            if (currentCommand == null) return;
+            currentCommand.onTrigger(args);
         }
 
         private static void queueEmoteSprites(string[] unstackedEmotes) {

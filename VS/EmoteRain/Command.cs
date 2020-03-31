@@ -10,7 +10,7 @@ namespace EmoteRain
     {
         public abstract string regName { get;}
         public abstract string trigger { get;}
-        public abstract void onTrigger(string arg);
+        public abstract void onTrigger(string[] arg);
     }
 
     class Toggle : Command
@@ -30,9 +30,9 @@ namespace EmoteRain
             }
         }
 
-        public override void onTrigger(string arg)
+        public override void onTrigger(string[] arg)
         {
-            switch (arg)
+            switch (arg[0])
             {
                 case "off":
                     Settings.menuRain = false;
