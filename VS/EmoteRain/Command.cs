@@ -1,6 +1,9 @@
-﻿using System;
+﻿using StreamCore.SimpleJSON;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,6 +55,74 @@ namespace EmoteRain
                 default:
                     if (Settings.menuRain || Settings.songRain) goto case "off";
                     else goto case "on";
+            }
+        }
+    }
+
+    class Ban : Command
+    {
+        public override string regName 
+        {
+            get
+            {
+                return "BanCMD";
+            }
+        }
+
+        public override string trigger
+        {
+            get
+            {
+                return "ban";
+            }
+        }
+
+        public override void onTrigger(string[] arg)
+        {
+            //building the webrequest
+            string weburl = "https://api.twitch.tv/kraken/users?login=" + arg[0];
+            WebRequest request = WebRequest.Create(weburl);
+            request.Headers.Add("Accept", "application/vnd.twitchtv.v5+json");
+            request.Headers.Add("Client-ID", "1h89o1f9o925i7foabk75y1qa78vjx");
+            WebResponse response = request.GetResponse();
+            Stream s = response.GetResponseStream();
+            StreamReader sr = new StreamReader(s);
+            JSONNode clientJson = JSON.Parse(sr.ReadToEnd());
+            clientJson = clientJson["users"];
+            clientJson = clientJson[0];
+            string userId = clientJson["_id"].Value;
+
+            //add UserID to banned list
+
+        }
+    }
+    
+    class Unban : Command
+    {
+        public override string regName 
+        {
+            get
+            {
+                return "UnbanCMD";
+            }
+        }
+
+        public override string trigger
+        {
+            get
+            {
+                return "unban";
+            }
+        }
+
+        public override void onTrigger(string[] arg)
+        {
+            foreach(string userToUnban in arg)
+            {
+                //search up UserID from username in twitchapi
+
+                //remove UserID from banned list if it exists
+
             }
         }
     }

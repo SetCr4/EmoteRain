@@ -30,5 +30,10 @@ namespace EmoteRain {
             path.Append("/" + component.GetType().Name);
             return path.ToString();
         }
+
+        internal static string[] GetUserIdsFromUsernames()
+        {
+
+        }
     }
 }
