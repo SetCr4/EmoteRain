@@ -25,13 +25,13 @@ namespace EmoteRain
 
         internal static string Name => "EmoteRain";
 
+        [Init]
         public void Init(IPALogger logger)
         {
             Logger.Init(logger);
             Log("Logger initialized.");
         }
 
-        [Init]
         /// <summary>
         /// Called when the a scene's assets are loaded.
         /// </summary>
@@ -57,6 +57,7 @@ namespace EmoteRain
 
         private static void Init()
         {
+            TwitchMSGHandler.onLoad();
             RequestCoordinator.OnLoad();
         }
 

@@ -18,16 +18,30 @@ namespace EmoteRain {
     /// </summary>
     internal class TwitchMSGHandler {
 
-        StreamCoreInstance sc;
+        private static StreamCoreInstance sc;
 
-        public TwitchMSGHandler() {
+        //public TwitchMSGHandler() {
+        //    sc = StreamCoreInstance.Create();
+        //    var svc = sc.RunTwitchServices();
+        //    svc.OnTextMessageReceived += Svc_OnTextMessageReceived;
+        //}
+
+        public static void onLoad()
+        {
+            SharedCoroutineStarter.instance.StartCoroutine(CheckChat());
+        }
+
+        private static IEnumerator CheckChat()
+        {
+            yield return new WaitForSeconds(1);
             sc = StreamCoreInstance.Create();
             var svc = sc.RunTwitchServices();
             svc.OnTextMessageReceived += Svc_OnTextMessageReceived;
         }
 
-        private void Svc_OnTextMessageReceived(IStreamingService svc, IChatMessage msg)
+        private static void Svc_OnTextMessageReceived(IStreamingService svc, IChatMessage msg)
         {
+            //don't need svc yet because only twitch is supported
             MSGHandler(msg);
         }
 
@@ -36,7 +50,7 @@ namespace EmoteRain {
             //string et = getEmoteTagFromMsg(twitchMsg.rawMessage);
             //string msg = twitchMsg.message;
             //string[] eids = combineAllIDs(getTwitchEmoteIDsFromTag(et),getBTTVEmoteIDsFromMsg(msg),getFFZEmoteIDsFromMsg(msg));
-            IChatEmote[] emoteTag = twitchMsg.Emotes;
+            IChatEmote[] emoteTag = filterAnimated(twitchMsg.Emotes);
             List<string> eids = new List<string>();
             if(emoteTag.Length > 0) {
                 Log("EmoteIDs:");
@@ -83,24 +97,34 @@ namespace EmoteRain {
             RequestCoordinator.EmoteQueue(e, count);
         }
 
-        private static string getEmoteTagFromMsg(string msg) {
-            //  bspMsg for msg where "moepHi" is an emote
-            //      MessageTest2 Emote: moepHi
-            // 
-            //  rawMsg is 
-            //      @badge-info=;badges=broadcaster/1,premium/1;color=#000F92;display-name=Cr4sher_;emotes=301242724:20-25;flags=;id=4fe7c5d4-a9f4-4190-8d7d-6ff55d75ab80;mod=0;room-id=133537093;
-            //      subscriber=0;tmi-sent-ts=1582742897726;turbo=0;user-id=133537093;user-type= :cr4sher_!cr4sher_@cr4sher_.tmi.twitch.tv PRIVMSG #cr4sher_ :MessageTest2 Emote: moepHi
-            //
-            //  therefore "emotes=301242724:20-25" should be extracted
-
-            string[] tags = msg.Split(';');
-            for(int i = 0; i < tags.Length; i++) {
-                if(tags[i].StartsWith("emotes=")) {
-                    return tags[i];
-                }
+        private static IChatEmote[] filterAnimated(IChatEmote[] unfilteredEmotes, bool anim = false)
+        {
+            List<IChatEmote> filteredEmotes = new List<IChatEmote>();
+            foreach(IChatEmote e in unfilteredEmotes)
+            {
+                if(e.IsAnimated == anim) filteredEmotes.Add(e);
             }
-            return "emotes=";
+            return filteredEmotes.ToArray();
         }
+
+        //private static string getEmoteTagFromMsg(string msg) {
+        //    //  bspMsg for msg where "moepHi" is an emote
+        //    //      MessageTest2 Emote: moepHi
+        //    // 
+        //    //  rawMsg is 
+        //    //      @badge-info=;badges=broadcaster/1,premium/1;color=#000F92;display-name=Cr4sher_;emotes=301242724:20-25;flags=;id=4fe7c5d4-a9f4-4190-8d7d-6ff55d75ab80;mod=0;room-id=133537093;
+        //    //      subscriber=0;tmi-sent-ts=1582742897726;turbo=0;user-id=133537093;user-type= :cr4sher_!cr4sher_@cr4sher_.tmi.twitch.tv PRIVMSG #cr4sher_ :MessageTest2 Emote: moepHi
+        //    //
+        //    //  therefore "emotes=301242724:20-25" should be extracted
+
+        //    string[] tags = msg.Split(';');
+        //    for(int i = 0; i < tags.Length; i++) {
+        //        if(tags[i].StartsWith("emotes=")) {
+        //            return tags[i];
+        //        }
+        //    }
+        //    return "emotes=";
+        //}
 
         //private static string[] getBTTVEmoteIDsFromMsg(string msg)
         //{
