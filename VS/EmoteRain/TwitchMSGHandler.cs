@@ -6,45 +6,46 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using StreamCore.Chat;
-using StreamCore;
-using StreamCore.Config;
-using StreamCore.Utils;
-using StreamCore.YouTube;
-using StreamCore.Twitch;
+using StreamCore.Services.Twitch;
 using static EmoteRain.Logger;
-using EnhancedStreamChat.Textures;
+using StreamCore;
+using StreamCore.Interfaces;
 
 namespace EmoteRain {
     /// <summary>
     /// Monobehaviours (scripts) are added to GameObjects.<br/>
     /// For a full list of Messages a Monobehaviour can receive from the game,<br/>see <seealso cref="https://docs.unity3d.com/ScriptReference/MonoBehaviour.html"/>.
     /// </summary>
-    internal class TwitchMSGHandler:ITwitchIntegration {
-        public bool IsPluginReady { get; set; }
+    internal class TwitchMSGHandler {
+
+        StreamCoreInstance sc;
 
         public TwitchMSGHandler() {
-            TwitchMessageHandlers.PRIVMSG += MSGHandler;
-            IsPluginReady = true;
+            sc = StreamCoreInstance.Create();
+            var svc = sc.RunTwitchServices();
+            svc.OnTextMessageReceived += Svc_OnTextMessageReceived;
         }
 
-        private static void MSGHandler(TwitchMessage twitchMsg) {
-            Log("Got Twitch Msg!\nrawMessage: " + twitchMsg.rawMessage);
-            string et = getEmoteTagFromMsg(twitchMsg.rawMessage);
-            string msg = twitchMsg.message;
-            string[] eids = combineAllIDs(getTwitchEmoteIDsFromTag(et),getBTTVEmoteIDsFromMsg(msg),getFFZEmoteIDsFromMsg(msg));
+        private void Svc_OnTextMessageReceived(IStreamingService svc, IChatMessage msg)
+        {
+            MSGHandler(msg);
+        }
 
-            if(eids.Length > 0) {
+        private static void MSGHandler(IChatMessage twitchMsg) {
+            Log("Got Twitch Msg!\nMessage: " + twitchMsg.Message);
+            //string et = getEmoteTagFromMsg(twitchMsg.rawMessage);
+            //string msg = twitchMsg.message;
+            //string[] eids = combineAllIDs(getTwitchEmoteIDsFromTag(et),getBTTVEmoteIDsFromMsg(msg),getFFZEmoteIDsFromMsg(msg));
+            IChatEmote[] emoteTag = twitchMsg.Emotes;
+            List<string> eids = new List<string>();
+            if(emoteTag.Length > 0) {
                 Log("EmoteIDs:");
-                foreach(string e in eids) {
-                    string str = "Twitch";
-                    if (e.StartsWith("B")) str = "BTTV";
-                    else if (e.StartsWith("AB")) str = "Animated BTTV";
-                    else if (e.StartsWith("F")) str = "FFZ";
-                    Log(str + " Emote ID {" + e + "}");
+                foreach(IChatEmote e in emoteTag) {
+                    Log("Emote ID {" + e.Id + "}");
+                    eids.Add(e.Id);
                 }
-                Log("Sending to Emote-Queue...");
-                queueEmoteSprites(eids);
+                Log($"Sending {emoteTag.Length} Emotes to Emote-Queue...");
+                queueEmoteSprites(eids.ToArray());
             } else {
                 Log("No Emotes in msg to queue!");
             }
@@ -101,66 +102,66 @@ namespace EmoteRain {
             return "emotes=";
         }
 
-        private static string[] getBTTVEmoteIDsFromMsg(string msg)
-        {
-            List<string> EmoteIDList = new List<string>();
-            string[] words = msg.Split(' ');
-            foreach(string e in words)
-            {
-                string str = "";
-                ImageDownloader.BTTVEmoteIDs.TryGetValue(e,out str);
-                if (str != null) EmoteIDList.Add("B" + str);
-            }
-            return EmoteIDList.ToArray();
-        }
+        //private static string[] getBTTVEmoteIDsFromMsg(string msg)
+        //{
+        //    List<string> EmoteIDList = new List<string>();
+        //    string[] words = msg.Split(' ');
+        //    foreach(string e in words)
+        //    {
+        //        string str = "";
+        //        ImageDownloader.BTTVEmoteIDs.TryGetValue(e,out str);
+        //        if (str != null) EmoteIDList.Add("B" + str);
+        //    }
+        //    return EmoteIDList.ToArray();
+        //}
 
-        private static string[] getFFZEmoteIDsFromMsg(string msg)
-        {
-            List<string> EmoteIDList = new List<string>();
-            string[] words = msg.Split(' ');
-            foreach (string e in words)
-            {
-                string str = "";
-                ImageDownloader.FFZEmoteIDs.TryGetValue(e, out str);
-                if (str != null) EmoteIDList.Add("F" + str);
-            }
-            return EmoteIDList.ToArray();
-        }
+        //private static string[] getFFZEmoteIDsFromMsg(string msg)
+        //{
+        //    List<string> EmoteIDList = new List<string>();
+        //    string[] words = msg.Split(' ');
+        //    foreach (string e in words)
+        //    {
+        //        string str = "";
+        //        ImageDownloader.FFZEmoteIDs.TryGetValue(e, out str);
+        //        if (str != null) EmoteIDList.Add("F" + str);
+        //    }
+        //    return EmoteIDList.ToArray();
+        //}
 
-        private static string[] getTwitchEmoteIDsFromTag(string emoteIDs)
-        {
-            //  bspInput
-            //      emotes=301290052:29-35/301242724:37-42/115845:44-52/106293:54-60
-            //  
-            //  bspOutput
-            //      {"301290052","301242724","115845","106293"}
+        //private static string[] getTwitchEmoteIDsFromTag(string emoteIDs)
+        //{
+        //    //  bspInput
+        //    //      emotes=301290052:29-35/301242724:37-42/115845:44-52/106293:54-60
+        //    //  
+        //    //  bspOutput
+        //    //      {"301290052","301242724","115845","106293"}
 
-            List<string> emoteIDArray = new List<string>();
+        //    List<string> emoteIDArray = new List<string>();
 
-            if(emoteIDs.Split('=')[1] == "") return emoteIDArray.ToArray();
-            Log(emoteIDs.Split('=').Length);
-            string[] emotesWithIndex = emoteIDs.Split('=')[1].Split('/');
-            foreach(string e in emotesWithIndex) {
-                string currentEmoteID = e.Split(':')[0];
-                string[] inLine = e.Split(':')[1].Split(',');
-                foreach(var _ in inLine) {
-                    emoteIDArray.Add("T" + currentEmoteID);
-                }
-            }
-            return emoteIDArray.ToArray();
-        }
+        //    if(emoteIDs.Split('=')[1] == "") return emoteIDArray.ToArray();
+        //    Log(emoteIDs.Split('=').Length);
+        //    string[] emotesWithIndex = emoteIDs.Split('=')[1].Split('/');
+        //    foreach(string e in emotesWithIndex) {
+        //        string currentEmoteID = e.Split(':')[0];
+        //        string[] inLine = e.Split(':')[1].Split(',');
+        //        foreach(var _ in inLine) {
+        //            emoteIDArray.Add("T" + currentEmoteID);
+        //        }
+        //    }
+        //    return emoteIDArray.ToArray();
+        //}
 
-        private static string[] combineAllIDs(params string[][] EmoteIDArr)
-        {
-            List<string> combined = new List<string>();
-            foreach (string[] e in EmoteIDArr)
-            {
-                foreach (string e2 in e)
-                {
-                    combined.Add(e2);
-                }
-            }
-            return combined.ToArray();
-        }
+        //private static string[] combineAllIDs(params string[][] EmoteIDArr)
+        //{
+        //    List<string> combined = new List<string>();
+        //    foreach (string[] e in EmoteIDArr)
+        //    {
+        //        foreach (string e2 in e)
+        //        {
+        //            combined.Add(e2);
+        //        }
+        //    }
+        //    return combined.ToArray();
+        //}
     }
 }

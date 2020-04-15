@@ -31,6 +31,7 @@ namespace EmoteRain
             Log("Logger initialized.");
         }
 
+        [Init]
         /// <summary>
         /// Called when the a scene's assets are loaded.
         /// </summary>
@@ -54,7 +55,6 @@ namespace EmoteRain
             Init();
         }
 
-        [Init]
         private static void Init()
         {
             RequestCoordinator.OnLoad();

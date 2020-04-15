@@ -10,11 +10,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EmoteRain</RootNamespace>
     <AssemblyName>EmoteRain</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PathMap>$(SolutionDir)=C:\</PathMap>
     <DebugType>portable</DebugType>
     <BeatSaberDir>$(ProjectDir)References</BeatSaberDir>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,8 +42,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\BS_Utils.dll</HintPath>
     </Reference>
-    <Reference Include="EnhancedStreamChat">
-      <HintPath>D:\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\EnhancedStreamChat.dll</HintPath>
+    <Reference Include="EnhancedStreamChat, Version=0.0.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\EnhancedStreamChat.dll</HintPath>
     </Reference>
     <Reference Include="HMLib, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -52,13 +54,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Main.dll</HintPath>
     </Reference>
-    <Reference Include="StreamCore, Version=2.2.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\StreamCore.dll</HintPath>
-    </Reference>
     <Reference Include="IPA.Loader">
       <HintPath>D:\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="StreamCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\StreamCore.dll</HintPath>
     </Reference>
     <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">

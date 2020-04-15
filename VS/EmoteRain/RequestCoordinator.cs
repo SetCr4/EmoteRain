@@ -1,4 +1,5 @@
-﻿using EnhancedStreamChat.Textures;
+﻿using EnhancedStreamChat.Chat;
+using EnhancedStreamChat.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -75,8 +76,8 @@ namespace EmoteRain
         {
             float time = Time.time;
 
-            CachedSpriteData cachedSpriteData = default;
-            yield return new WaitUntil(() => ImageDownloader.CachedTextures.TryGetValue(id, out cachedSpriteData) && mode != Mode.None);
+            EnhancedImageInfo enhancedImageInfo = default;
+            yield return new WaitUntil(() => ChatImageProvider.instance.CachedImageInfo.TryGetValue(id, out enhancedImageInfo) && mode != Mode.None);
 
             Log($"Continuing after {Time.time - time} seconds...");
 
@@ -99,7 +100,7 @@ namespace EmoteRain
                 cloneTimer = ps_Prefab_Pair.Item1[id];
             }
             Log("Assigning texture...");
-            cloneTimer.PSR.material.mainTexture = cachedSpriteData.sprite.texture;
+            cloneTimer.PSR.material.mainTexture = enhancedImageInfo.Sprite.texture;
 
             cloneTimer.Emit(count);
 
