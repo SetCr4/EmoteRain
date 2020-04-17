@@ -119,6 +119,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5367859451982913632, guid: 4dbbdb05ba3771548accb170743b580c,
+        type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367859451982913633, guid: 4dbbdb05ba3771548accb170743b580c,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367859451982913633, guid: 4dbbdb05ba3771548accb170743b580c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 5367859451982913635, guid: 4dbbdb05ba3771548accb170743b580c,
         type: 3}
       propertyPath: m_Name
