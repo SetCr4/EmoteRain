@@ -66,34 +66,11 @@ namespace EmoteRain {
         }
 
         private static void queueEmoteSprites(IChatEmote[] unstackedEmotes) {
-            //var emotes2 = from e in emoteID group e by e.Length into g select g;
-            var stackedEmotes = from emote in unstackedEmotes
-                                group emote by emote.Id into emoteGrouping
-                                select emoteGrouping;
+            (from iChatEmote in unstackedEmotes
+                group iChatEmote by iChatEmote.Id into emoteGrouping
+                select new { emote = emoteGrouping.First(), count = (byte)emoteGrouping.Count() }
+            ).ToList().ForEach(x => HMMainThreadDispatcher.instance.Enqueue(EnqueueEmote(x.emote, x.count)));
 
-            foreach(var emoteCol in stackedEmotes) {
-                IChatEmote currentEmote = null;
-                foreach(var emote in emoteCol) {
-                    currentEmote = emote;
-                }
-                Log($"Trying to enqueue Emote with ID: {currentEmote.Id}, {emoteCol.Count()} times");
-                HMMainThreadDispatcher.instance.Enqueue(EnqueueEmote(currentEmote, (byte)emoteCol.Count()));
-            }
-
-            //var emotes = emoteID.GroupBy(
-            //    x => x,
-            //    x => x,
-            //    (id, arr) => 
-            //        new ValueTuple<string, byte>(
-            //            id,
-            //            (byte)arr.Count()
-            //        )
-            //    )
-            //;
-            //foreach((string, byte) emote in emotes) {
-            //    Log($"Trying to enqueue Emote with ID: {emote.Item1}, {emote.Item2} times");
-            //    HMMainThreadDispatcher.instance.Enqueue(EnqueueEmote(emote.Item1, emote.Item2));
-            //}
         }
 
         private static IEnumerator EnqueueEmote(IChatEmote emote, byte count) {
