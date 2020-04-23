@@ -50,7 +50,7 @@ namespace EmoteRain {
             //string et = getEmoteTagFromMsg(twitchMsg.rawMessage);
             //string msg = twitchMsg.message;
             //string[] eids = combineAllIDs(getTwitchEmoteIDsFromTag(et),getBTTVEmoteIDsFromMsg(msg),getFFZEmoteIDsFromMsg(msg));
-            IChatEmote[] emoteTag = filterAnimated(twitchMsg.Emotes);
+            IChatEmote[] emoteTag = twitchMsg.Emotes;
             List<string> eids = new List<string>();
             if(emoteTag.Length > 0) {
                 Log("EmoteIDs:");
@@ -59,21 +59,25 @@ namespace EmoteRain {
                     eids.Add(e.Id);
                 }
                 Log($"Sending {emoteTag.Length} Emotes to Emote-Queue...");
-                queueEmoteSprites(eids.ToArray());
+                queueEmoteSprites(emoteTag);
             } else {
                 Log("No Emotes in msg to queue!");
             }
         }
 
-        private static void queueEmoteSprites(string[] unstackedEmotes) {
+        private static void queueEmoteSprites(IChatEmote[] unstackedEmotes) {
             //var emotes2 = from e in emoteID group e by e.Length into g select g;
             var stackedEmotes = from emote in unstackedEmotes
-                                group emote by emote into emoteGrouping
-                                select new { ID = emoteGrouping.Key, Count = emoteGrouping.Count() };
+                                group emote by emote.Id into emoteGrouping
+                                select emoteGrouping;
 
-            foreach(var emote in stackedEmotes) {
-                Log($"Trying to enqueue Emote with ID: {emote.ID}, {emote.Count} times");
-                HMMainThreadDispatcher.instance.Enqueue(EnqueueEmote(emote.ID, (byte)emote.Count));
+            foreach(var emoteCol in stackedEmotes) {
+                IChatEmote currentEmote = null;
+                foreach(var emote in emoteCol) {
+                    currentEmote = emote;
+                }
+                Log($"Trying to enqueue Emote with ID: {currentEmote.Id}, {emoteCol.Count()} times");
+                HMMainThreadDispatcher.instance.Enqueue(EnqueueEmote(currentEmote, (byte)emoteCol.Count()));
             }
 
             //var emotes = emoteID.GroupBy(
@@ -92,9 +96,9 @@ namespace EmoteRain {
             //}
         }
 
-        private static IEnumerator EnqueueEmote(string e, byte count) {
+        private static IEnumerator EnqueueEmote(IChatEmote emote, byte count) {
             yield return null;
-            RequestCoordinator.EmoteQueue(e, count);
+            RequestCoordinator.EmoteQueue(emote, count);
         }
 
         private static IChatEmote[] filterAnimated(IChatEmote[] unfilteredEmotes, bool anim = false)
