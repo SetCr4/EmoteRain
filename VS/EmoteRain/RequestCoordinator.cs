@@ -74,7 +74,6 @@ namespace EmoteRain
         private static IEnumerator<WaitUntil> WaitForCollection(IChatEmote emote, byte count)
         {
             float time = Time.time;
-            bool isAnimation = false; //doesn't do anything yet. look below.
 
             EnhancedImageInfo enhancedImageInfo = default;
             yield return new WaitUntil(() => ChatImageProvider.instance.CachedImageInfo.TryGetValue(emote.Id, out enhancedImageInfo) && mode != Mode.None);
@@ -101,7 +100,7 @@ namespace EmoteRain
             }
 
             //not sure about this. Might not work at all, but is not yet in use. So it technically does work?
-            if(isAnimation)
+            if(emote.IsAnimated)
             {
                 int numTilesX = (int)(enhancedImageInfo.Width / enhancedImageInfo.AnimControllerData.uvs[0].width);
                 int numTilesY = (int)(enhancedImageInfo.Height / enhancedImageInfo.AnimControllerData.uvs[0].height);
@@ -123,6 +122,10 @@ namespace EmoteRain
                 float currentFramePercentage = 0;
                 for(int i = 0; currentTimePercentage < 1.0f; i++)
                 {
+                    if(i >= enhancedImageInfo.AnimControllerData.delays.Length)
+                    {
+                        i = 0;
+                    }
                     currentTimePercentage += (enhancedImageInfo.AnimControllerData.delays[i] / 1000) / lifeTime;
                     if(currentFramePercentage < maxFramePercentage)
                     {
