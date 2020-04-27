@@ -32,10 +32,8 @@ namespace EmoteRain
             {
                 if (!_myScene.HasValue)
                 {
-                    Log("Creating Scene..");
                     _myScene = SceneManager.CreateScene("EmoteRainScene");
                 }
-                Log("Returning Scene..");
                 return _myScene.Value;
             }
         }
@@ -76,12 +74,12 @@ namespace EmoteRain
         private static IEnumerator<WaitUntil> WaitForCollection(IChatEmote emote, byte count)
         {
             float time = Time.time;
-            bool animation = emote.IsAnimated;
+            bool isAnimation = false; //doesn't do anything yet. look below.
 
             EnhancedImageInfo enhancedImageInfo = default;
             yield return new WaitUntil(() => ChatImageProvider.instance.CachedImageInfo.TryGetValue(emote.Id, out enhancedImageInfo) && mode != Mode.None);
 
-            Log($"Continuing after {Time.time - time} seconds...");
+            //Log($"Continuing after {Time.time - time} seconds...");
 
             TimeoutScript cloneTimer;
             PS_Prefab_Pair ps_Prefab_Pair = particleSystems[mode];
@@ -103,7 +101,7 @@ namespace EmoteRain
             }
 
             //not sure about this. Might not work at all, but is not yet in use. So it technically does work?
-            if(animation)
+            if(isAnimation)
             {
                 int numTilesX = (int)(enhancedImageInfo.Width / enhancedImageInfo.AnimControllerData.uvs[0].width);
                 int numTilesY = (int)(enhancedImageInfo.Height / enhancedImageInfo.AnimControllerData.uvs[0].height);
@@ -140,12 +138,12 @@ namespace EmoteRain
             }
             //end of "not-sure-about-this"
 
-            Log("Assigning texture...");
+            //Log("Assigning texture...");
             cloneTimer.PSR.material.mainTexture = enhancedImageInfo.Sprite.texture;
 
             cloneTimer.Emit(count);
 
-            Log("ParticleSystems notified! ");
+            //Log("ParticleSystems notified! ");
 
         }
         //Needs rework...
@@ -177,7 +175,7 @@ namespace EmoteRain
         internal static void UnregisterPS(string key, Mode mode)
         {
             UnityEngine.Object.Destroy(particleSystems[mode].Item1[key]);
-            Log("Inactive ParticleSystem. Removing...");
+            //Log("Inactive ParticleSystem. Removing...");
             particleSystems[mode].Item1.Remove(key);
         }
     }
