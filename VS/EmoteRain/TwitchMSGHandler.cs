@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using StreamCore.Services.Twitch;
+using ChatCore.Services.Twitch;
 using static EmoteRain.Logger;
-using StreamCore;
-using StreamCore.Interfaces;
+using ChatCore;
+using ChatCore.Interfaces;
 
 namespace EmoteRain {
     /// <summary>
@@ -18,10 +18,10 @@ namespace EmoteRain {
     /// </summary>
     internal class TwitchMSGHandler {
 
-        private static StreamCoreInstance sc;
+        private static ChatCoreInstance sc;
 
         //public TwitchMSGHandler() {
-        //    sc = StreamCoreInstance.Create();
+        //    sc = ChatCoreInstance.Create();
         //    var svc = sc.RunTwitchServices();
         //    svc.OnTextMessageReceived += Svc_OnTextMessageReceived;
         //}
@@ -34,12 +34,12 @@ namespace EmoteRain {
         private static IEnumerator CheckChat()
         {
             yield return new WaitForSeconds(1);
-            sc = StreamCoreInstance.Create();
+            sc = ChatCoreInstance.Create();
             var svc = sc.RunTwitchServices();
             svc.OnTextMessageReceived += Svc_OnTextMessageReceived;
         }
 
-        private static void Svc_OnTextMessageReceived(IStreamingService svc, IChatMessage msg)
+        private static void Svc_OnTextMessageReceived(IChatService svc, IChatMessage msg)
         {
             //don't need svc yet because only twitch is supported
             MSGHandler(msg);

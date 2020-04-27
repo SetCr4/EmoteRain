@@ -1,6 +1,6 @@
-﻿using EnhancedStreamChat.Chat;
+﻿using ChatCore.Interfaces;
+using EnhancedStreamChat.Chat;
 using EnhancedStreamChat.Graphics;
-using StreamCore.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
