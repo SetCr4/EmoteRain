@@ -93,56 +93,49 @@ namespace EmoteRain
                 cloneTimer.mode = mode;
                 SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);
                 ps_Prefab_Pair.Item1.Add(emote.Id, cloneTimer);
+
+                //sorta working animated emotes
+                if (emote.IsAnimated)
+                {
+                    var tex = cloneTimer.PS.textureSheetAnimation;
+                    tex.enabled = true;
+                    tex.mode = ParticleSystemAnimationMode.Sprites;
+                    tex.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
+                    int spriteCount = enhancedImageInfo.AnimControllerData.sprites.Length - 1;
+                    for (int i = 0; i < spriteCount; i++)
+                    {
+                        tex.AddSprite(enhancedImageInfo.AnimControllerData.sprites[i]);
+                    }
+
+                    float lifeTime = cloneTimer.PS.main.startLifetime.constant * 1000;
+                    AnimationCurve curve = new AnimationCurve();
+                    float singleFramePercentage = 1.0f / spriteCount;
+                    Log($"singleFramePercentage {singleFramePercentage}");
+                    float currentTimePercentage = 0;
+                    float currentFramePercentage = 0;
+
+                    for (int frameCounter = 0; currentTimePercentage < 1; frameCounter++)
+                    {
+                        if (frameCounter > spriteCount)
+                        {
+                            frameCounter = 0;
+                            currentFramePercentage = 0;
+                        }
+                        curve.AddKey(currentTimePercentage, currentFramePercentage);
+                        currentTimePercentage += enhancedImageInfo.AnimControllerData.delays[frameCounter] / lifeTime;
+                        currentFramePercentage += singleFramePercentage;
+                    }
+                    tex.frameOverTime = new ParticleSystem.MinMaxCurve(1.0f, curve);
+                }
+                //end of animated emotes
+
+                //Log("Assigning texture...");
+                cloneTimer.PSR.material.mainTexture = enhancedImageInfo.Sprite.texture;
             }
             else
             {
                 cloneTimer = ps_Prefab_Pair.Item1[emote.Id];
             }
-
-            //not sure about this. Might not work at all, but is not yet in use. So it technically does work?
-            if(emote.IsAnimated)
-            {
-                int numTilesX = (int)(enhancedImageInfo.Width / enhancedImageInfo.AnimControllerData.uvs[0].width);
-                int numTilesY = (int)(enhancedImageInfo.Height / enhancedImageInfo.AnimControllerData.uvs[0].height);
-
-                var tex = cloneTimer.PS.textureSheetAnimation;
-                tex.enabled = true;
-                tex.animation = ParticleSystemAnimationType.WholeSheet;
-                tex.numTilesX = numTilesX;
-                tex.numTilesY = numTilesY;
-                tex.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
-
-                float lifeTime = cloneTimer.PS.main.startLifetime.constant;
-                AnimationCurve curve = new AnimationCurve();
-                float singleFramePercentage = 1 / enhancedImageInfo.AnimControllerData.uvs.Length;
-                float maxFramePercentage = enhancedImageInfo.AnimControllerData.uvs.Length / (numTilesX * numTilesY);
-
-                List<float> timePercentages = new List<float>();
-                float currentTimePercentage = 0;
-                float currentFramePercentage = 0;
-                for(int i = 0; currentTimePercentage < 1.0f; i++)
-                {
-                    if(i >= enhancedImageInfo.AnimControllerData.delays.Length)
-                    {
-                        i = 0;
-                    }
-                    currentTimePercentage += (enhancedImageInfo.AnimControllerData.delays[i] / 1000) / lifeTime;
-                    if(currentFramePercentage < maxFramePercentage)
-                    {
-                        currentFramePercentage += singleFramePercentage;
-                    }
-                    else
-                    {
-                        currentFramePercentage = 0;
-                    }
-                    curve.AddKey(currentTimePercentage,currentFramePercentage);
-                }
-                tex.frameOverTime = new ParticleSystem.MinMaxCurve(1.0f, curve);
-            }
-            //end of "not-sure-about-this"
-
-            //Log("Assigning texture...");
-            cloneTimer.PSR.material.mainTexture = enhancedImageInfo.Sprite.texture;
 
             cloneTimer.Emit(count);
 
