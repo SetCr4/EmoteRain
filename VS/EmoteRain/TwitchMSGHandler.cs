@@ -41,7 +41,7 @@ namespace EmoteRain {
 
         private static void MSGHandler(IChatMessage twitchMsg) {
             //Log("Got Twitch Msg!\nMessage: " + twitchMsg.Message);
-            IChatEmote[] emoteTag = filterAnimated(twitchMsg.Emotes); //remove filter when working with animated emotes
+            IChatEmote[] emoteTag = twitchMsg.Emotes; //remove filter when working with animated emotes
             if(emoteTag.Length > 0) {
                 //Log($"Sending {emoteTag.Length} Emotes to Emote-Queue...");
                 queueEmoteSprites(emoteTag);
