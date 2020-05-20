@@ -1,4 +1,6 @@
-﻿using EnhancedStreamChat.Textures;
+﻿using ChatCore.Interfaces;
+using EnhancedStreamChat.Chat;
+using EnhancedStreamChat.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -20,7 +22,7 @@ namespace EmoteRain
 
         private static Mode mode;
 
-        internal static Action<string, byte> EmoteQueue;
+        internal static Action<IChatEmote, byte> EmoteQueue;
 
         private static Dictionary<Mode, PS_Prefab_Pair> particleSystems = new Dictionary<Mode, PS_Prefab_Pair>();
 
@@ -30,10 +32,8 @@ namespace EmoteRain
             {
                 if (!_myScene.HasValue)
                 {
-                    Log("Creating Scene..");
                     _myScene = SceneManager.CreateScene("EmoteRainScene");
                 }
-                Log("Returning Scene..");
                 return _myScene.Value;
             }
         }
@@ -63,47 +63,83 @@ namespace EmoteRain
             Log("Prefab at: " + (particleSystems[Mode.Play].Item2 ? particleSystems[Mode.Play].Item2.GetFullPath() : "null"));
         }
 
-        private static void MessageCallback(string id, byte count)
+        private static void MessageCallback(IChatEmote emote, byte count)
         {
             if ((mode == Mode.Menu && Settings.menuRain) || (mode == Mode.Play && Settings.songRain))
             {
-                SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(id, count));
+                SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(emote, count));
             }
         }
 
-        private static IEnumerator<WaitUntil> WaitForCollection(string id, byte count)
+        private static IEnumerator<WaitUntil> WaitForCollection(IChatEmote emote, byte count)
         {
             float time = Time.time;
 
-            CachedSpriteData cachedSpriteData = default;
-            yield return new WaitUntil(() => ImageDownloader.CachedTextures.TryGetValue(id, out cachedSpriteData) && mode != Mode.None);
+            EnhancedImageInfo enhancedImageInfo = default;
+            yield return new WaitUntil(() => ChatImageProvider.instance.CachedImageInfo.TryGetValue(emote.Id, out enhancedImageInfo) && mode != Mode.None);
 
-            Log($"Continuing after {Time.time - time} seconds...");
+            //Log($"Continuing after {Time.time - time} seconds...");
 
             TimeoutScript cloneTimer;
             PS_Prefab_Pair ps_Prefab_Pair = particleSystems[mode];
 
-            if (!ps_Prefab_Pair.Item1.ContainsKey(id))
+            if (!ps_Prefab_Pair.Item1.ContainsKey(emote.Id))
             {
                 cloneTimer = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2).GetComponent<TimeoutScript>();
                 var main = cloneTimer.PS.main;
                 if (mode == Mode.Menu) main.startSize = Settings.menuSize;
                 if (mode == Mode.Play) main.startSize = Settings.songSize;
-                cloneTimer.key = id;
+                cloneTimer.key = emote.Id;
                 cloneTimer.mode = mode;
                 SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);
-                ps_Prefab_Pair.Item1.Add(id, cloneTimer);
+                ps_Prefab_Pair.Item1.Add(emote.Id, cloneTimer);
+
+                //sorta working animated emotes
+                if (emote.IsAnimated)
+                {
+                    var tex = cloneTimer.PS.textureSheetAnimation;
+                    tex.enabled = true;
+                    tex.mode = ParticleSystemAnimationMode.Sprites;
+                    tex.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
+                    int spriteCount = enhancedImageInfo.AnimControllerData.sprites.Length - 1;
+                    for (int i = 0; i < spriteCount; i++)
+                    {
+                        tex.AddSprite(enhancedImageInfo.AnimControllerData.sprites[i]);
+                    }
+
+                    float lifeTime = cloneTimer.PS.main.startLifetime.constant * 1000;
+                    AnimationCurve curve = new AnimationCurve();
+                    float singleFramePercentage = 1.0f / spriteCount;
+                    Log($"singleFramePercentage {singleFramePercentage}");
+                    float currentTimePercentage = 0;
+                    float currentFramePercentage = 0;
+
+                    for (int frameCounter = 0; currentTimePercentage < 1; frameCounter++)
+                    {
+                        if (frameCounter > spriteCount)
+                        {
+                            frameCounter = 0;
+                            currentFramePercentage = 0;
+                        }
+                        curve.AddKey(currentTimePercentage, currentFramePercentage);
+                        currentTimePercentage += enhancedImageInfo.AnimControllerData.delays[frameCounter] / lifeTime;
+                        currentFramePercentage += singleFramePercentage;
+                    }
+                    tex.frameOverTime = new ParticleSystem.MinMaxCurve(1.0f, curve);
+                }
+                //end of animated emotes
+
+                //Log("Assigning texture...");
+                cloneTimer.PSR.material.mainTexture = enhancedImageInfo.Sprite.texture;
             }
             else
             {
-                cloneTimer = ps_Prefab_Pair.Item1[id];
+                cloneTimer = ps_Prefab_Pair.Item1[emote.Id];
             }
-            Log("Assigning texture...");
-            cloneTimer.PSR.material.mainTexture = cachedSpriteData.sprite.texture;
 
             cloneTimer.Emit(count);
 
-            Log("ParticleSystems notified! ");
+            //Log("ParticleSystems notified! ");
 
         }
         //Needs rework...
@@ -135,7 +171,7 @@ namespace EmoteRain
         internal static void UnregisterPS(string key, Mode mode)
         {
             UnityEngine.Object.Destroy(particleSystems[mode].Item1[key]);
-            Log("Inactive ParticleSystem. Removing...");
+            //Log("Inactive ParticleSystem. Removing...");
             particleSystems[mode].Item1.Remove(key);
         }
     }

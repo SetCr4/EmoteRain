@@ -12,7 +12,7 @@ namespace EmoteRain {
             logger = IPAlogger;
         }
 
-        private static IPALogger logger { get; set; }
+        public static IPALogger logger { get; set; }
 
         internal static void Log(Exception e, Level level = Level.Notice) {
             Log("An error has been caught:\n" + e.GetType().Name + "\nAt:\n" + e.StackTrace + "\nWith message:\n" + e.Message, level);

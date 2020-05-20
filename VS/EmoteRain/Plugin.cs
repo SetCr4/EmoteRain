@@ -12,17 +12,20 @@ using static EmoteRain.Logger;
 using System.Reflection;
 using System.IO;
 using BS_Utils.Utilities;
+using UnityEngine.Events;
 
 namespace EmoteRain
 {
 
-    internal class Plugin : IBeatSaberPlugin
+    [Plugin(RuntimeOptions.SingleStartInit)]
+    internal class Plugin
     {
         private static bool init;
         internal static Config config = new Config("EmoteRain");
 
         internal static string Name => "EmoteRain";
 
+        [Init]
         public void Init(IPALogger logger)
         {
             Logger.Init(logger);
@@ -34,18 +37,6 @@ namespace EmoteRain
         /// </summary>
         /// <param name="scene"></param>
         /// <param name="sceneMode"></param>
-        public void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
-        {
-            if (!init)
-            {
-                init = true;
-                SharedCoroutineStarter.instance.StartCoroutine(WaitForMenu());
-            }
-            if (scene.name.Contains("Environment"))
-            {
-                RequestCoordinator.EnvironmentSwitched(scene.name, SceneLoadMode.Load);
-            }
-        }
         private static IEnumerator<WaitUntil> WaitForMenu()
         {
             yield return new WaitUntil(() =>
@@ -66,17 +57,31 @@ namespace EmoteRain
 
         private static void Init()
         {
+            TwitchMSGHandler.onLoad();
             RequestCoordinator.OnLoad();
         }
 
+        [OnStart]
         public void OnApplicationStart()
         {
             BSMLSettings.instance.AddSettingsMenu("EmoteRain", "EmoteRain.Views.settings.bsml", Settings.instance);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
-        public void OnApplicationQuit() { }
-        public void OnFixedUpdate() { }
-        public void OnUpdate() { }
-        public void OnActiveSceneChanged(Scene prevScene, Scene nextScene) { }
+
+        public void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
+        {
+            if (!init)
+            {
+                init = true;
+                SharedCoroutineStarter.instance.StartCoroutine(WaitForMenu());
+            }
+            if (scene.name.Contains("Environment"))
+            {
+                RequestCoordinator.EnvironmentSwitched(scene.name, SceneLoadMode.Load);
+            }
+        }
+
         public void OnSceneUnloaded(Scene scene)
         {
             if (scene.name.Contains("Environment"))
