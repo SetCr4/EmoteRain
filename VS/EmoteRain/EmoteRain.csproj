@@ -99,6 +99,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="SceneLoadMode.cs" />

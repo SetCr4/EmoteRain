@@ -111,5 +111,46 @@ namespace EmoteRain
             }
         }
         private static int? _emoteDelay;
+        
+        [UIValue("emote-fallspeed")]
+        public static float emoteFallspeed {
+            get {
+                if(_emoteFallspeed == null) {
+                    _emoteFallspeed = Plugin.config.GetFloat("Settings", "EmoteFallspeed", 3, true);
+                }
+                return _emoteFallspeed.Value;
+            }
+            set {
+                if(value != _emoteFallspeed.Value) {
+                    Plugin.config.SetFloat("Settings", "EmoteFallspeed", value);
+                    _emoteFallspeed = value;
+                }
+            }
+        }
+        private static float? _emoteFallspeed;
+
+        //This is just here if the prefix should be customizeable later on
+        //Or in other words: Doesn't do anything right now
+        public static string prefix 
+        { 
+            get 
+            { 
+                if(_prefix == null) 
+                {
+                    //_prefix = Plugin.config.GetString("Settings", "Prefix", "!er", true);
+                    _prefix = "!er";
+                }
+                return _prefix;
+            }
+            set 
+            {
+                if (value != _prefix)
+                {
+                    //Plugin.config.SetString("Settings", "Prefix", value);
+                    _prefix = value;
+                }
+            }
+        }
+        private static string _prefix;
     }
 }

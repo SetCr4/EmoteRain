@@ -10,6 +10,7 @@ using ChatCore.Services.Twitch;
 using static EmoteRain.Logger;
 using ChatCore;
 using ChatCore.Interfaces;
+using System.Reflection;
 
 namespace EmoteRain {
     /// <summary>
@@ -22,6 +23,7 @@ namespace EmoteRain {
 
         public static void onLoad()
         {
+            registerCommands();
             SharedCoroutineStarter.instance.StartCoroutine(CheckChat());
         }
 
@@ -35,8 +37,11 @@ namespace EmoteRain {
 
         private static void Svc_OnTextMessageReceived(IChatService svc, IChatMessage msg)
         {
-            //don't need svc yet because only twitch is supported
-            MSGHandler(msg);
+            //Log($"MSG from {msg.Sender.Name} is User: {!msg.Sender.IsBroadcaster&&!msg.Sender.IsModerator}; is Mod: {msg.Sender.IsModerator}; is BC: {msg.Sender.IsBroadcaster}");
+            if (msg.Message.StartsWith(Settings.prefix))
+                CMDHandler(svc, msg);
+            else
+                MSGHandler(msg);
         }
 
         private static void MSGHandler(IChatMessage twitchMsg) {
@@ -46,6 +51,22 @@ namespace EmoteRain {
                 //Log($"Sending {emoteTag.Length} Emotes to Emote-Queue...");
                 queueEmoteSprites(emoteTag);
             } 
+        }
+        
+        private static void CMDHandler(IChatService svc, IChatMessage twitchMsg) {
+            string[] msgSplited = twitchMsg.Message.Split(' ');
+            Command commandToExecute = null;
+            if(registeredCommands.TryGetValue(msgSplited[1], out commandToExecute))
+            {
+                if (isAllowed(commandToExecute.neededRank, twitchMsg.Sender))
+                {
+                    commandToExecute.onTrigger(svc, twitchMsg.Channel, msgSplited.TakeLast(msgSplited.Length - 2).ToArray());
+                }
+                else
+                {
+                    svc.SendTextMessage("[EmoteRain] You are not allowed to use this Command!", twitchMsg.Channel);
+                }
+            }
         }
 
         private static void queueEmoteSprites(IChatEmote[] unstackedEmotes) {
@@ -69,6 +90,39 @@ namespace EmoteRain {
                 if(e.IsAnimated == anim) filteredEmotes.Add(e);
             }
             return filteredEmotes.ToArray();
+        }
+
+        private static Dictionary<String, Command> registeredCommands = new Dictionary<string, Command>();
+        private static void registerCommands()
+        {
+            IEnumerable<Command> commands = Extensions.GetEnumerableOfType<Command>();
+            foreach(Command e in commands)
+            {
+                registeredCommands.Add(e.trigger,e);
+            }
+        }
+
+        private static bool isAllowed(int neededRank, IChatUser user)
+        {
+            //Disabled: 0; User: 1; Mods: 2; Broadcaster: 3
+            bool returner = false;
+            switch(neededRank)
+            {
+                case 0:
+                    break;
+                case 1:
+                    returner = true;
+                    break;
+                case 2:
+                    if (user.IsModerator || user.IsBroadcaster)
+                        returner = true;
+                    break;
+                case 3:
+                    if (user.IsBroadcaster)
+                        returner = true;
+                    break;
+            }
+            return returner;
         }
     }
 }
