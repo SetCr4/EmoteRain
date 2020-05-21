@@ -1,11 +1,14 @@
-﻿using StreamCore.SimpleJSON;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using ChatCore.SimpleJSON;
+using ChatCore.Services.Twitch;
+using ChatCore.Models.Twitch;
+using ChatCore.Interfaces;
 
 namespace EmoteRain
 {
@@ -13,7 +16,11 @@ namespace EmoteRain
     {
         public abstract string regName { get;}
         public abstract string trigger { get;}
-        public abstract void onTrigger(string[] arg);
+        public abstract int neededRank { get; } //needed userrank to use that command 
+                                                //(Disabled: 0; User: 1; Mods: 2; Broadcaster: 3) 
+                                                //Disable is added if the needed rank should be customizeable later on
+
+        public abstract void onTrigger(IChatService svc, IChatChannel channel, string[] arg);
     }
 
     class Toggle : Command
@@ -32,98 +39,48 @@ namespace EmoteRain
                 return "toggle";
             }
         }
-
-        public override void onTrigger(string[] arg)
+        public override int neededRank
         {
+            get
+            {
+                return 2; //Mods and upwards
+            }
+        }
+
+        public override void onTrigger(IChatService svc, IChatChannel channel, string[] arg)
+        {
+            string outputMsg = "Something went wrong D:";
+            if(arg.Length < 1)
+            {
+                arg = new string[]{""};
+            }
+
             switch (arg[0])
             {
                 case "off":
                     Settings.menuRain = false;
                     Settings.songRain = false;
+                    outputMsg = "Rain toggled off";
                     break;
                 case "on":
                     Settings.menuRain = true;
                     Settings.songRain = true;
+                    outputMsg = "Rain toggled on";
                     break;
                 case "menu":
                     Settings.menuRain = !Settings.menuRain;
+                    outputMsg = $"Rain in menu toggled {(Settings.menuRain ? "on" : "off")}";
                     break;
                 case "song":
                     Settings.songRain = !Settings.songRain;
+                    outputMsg = $"Rain in menu toggled {(Settings.songRain ? "on" : "off")}";
                     break;
                 case "all":
                 default:
                     if (Settings.menuRain || Settings.songRain) goto case "off";
                     else goto case "on";
             }
-        }
-    }
-
-    class Ban : Command
-    {
-        public override string regName 
-        {
-            get
-            {
-                return "BanCMD";
-            }
-        }
-
-        public override string trigger
-        {
-            get
-            {
-                return "ban";
-            }
-        }
-
-        public override void onTrigger(string[] arg)
-        {
-            //building the webrequest
-            string weburl = "https://api.twitch.tv/kraken/users?login=" + arg[0];
-            WebRequest request = WebRequest.Create(weburl);
-            request.Headers.Add("Accept", "application/vnd.twitchtv.v5+json");
-            request.Headers.Add("Client-ID", "1h89o1f9o925i7foabk75y1qa78vjx");
-            WebResponse response = request.GetResponse();
-            Stream s = response.GetResponseStream();
-            StreamReader sr = new StreamReader(s);
-            JSONNode clientJson = JSON.Parse(sr.ReadToEnd());
-            clientJson = clientJson["users"];
-            clientJson = clientJson[0];
-            string userId = clientJson["_id"].Value;
-
-            //add UserID to banned list
-
-        }
-    }
-    
-    class Unban : Command
-    {
-        public override string regName 
-        {
-            get
-            {
-                return "UnbanCMD";
-            }
-        }
-
-        public override string trigger
-        {
-            get
-            {
-                return "unban";
-            }
-        }
-
-        public override void onTrigger(string[] arg)
-        {
-            foreach(string userToUnban in arg)
-            {
-                //search up UserID from username in twitchapi
-
-                //remove UserID from banned list if it exists
-
-            }
+            svc.SendTextMessage(outputMsg,channel);
         }
     }
 }

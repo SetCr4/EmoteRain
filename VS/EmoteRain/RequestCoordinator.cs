@@ -110,11 +110,10 @@ namespace EmoteRain
                     float lifeTime = cloneTimer.PS.main.startLifetime.constant * 1000;
                     AnimationCurve curve = new AnimationCurve();
                     float singleFramePercentage = 1.0f / spriteCount;
-                    Log($"singleFramePercentage {singleFramePercentage}");
                     float currentTimePercentage = 0;
                     float currentFramePercentage = 0;
 
-                    for (int frameCounter = 0; currentTimePercentage < 1; frameCounter++)
+                    for (int frameCounter = 0; currentTimePercentage <= 1; frameCounter++)
                     {
                         if (frameCounter > spriteCount)
                         {
