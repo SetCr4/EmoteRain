@@ -89,6 +89,8 @@ namespace EmoteRain
                 var main = cloneTimer.PS.main;
                 if (mode == Mode.Menu) main.startSize = Settings.menuSize;
                 if (mode == Mode.Play) main.startSize = Settings.songSize;
+                main.startSpeed = Settings.emoteFallspeed;
+                main.startLifetime = (8 / (Settings.emoteFallspeed - 1)) + 1;
                 cloneTimer.key = emote.Id;
                 cloneTimer.mode = mode;
                 SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);
@@ -102,12 +104,14 @@ namespace EmoteRain
                     tex.mode = ParticleSystemAnimationMode.Sprites;
                     tex.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
                     int spriteCount = enhancedImageInfo.AnimControllerData.sprites.Length - 1;
+                    float timeForEmote = 0;
                     for (int i = 0; i < spriteCount; i++)
                     {
                         tex.AddSprite(enhancedImageInfo.AnimControllerData.sprites[i]);
+                        timeForEmote += enhancedImageInfo.AnimControllerData.delays[i];
                     }
 
-                    float lifeTime = cloneTimer.PS.main.startLifetime.constant * 1000;
+                    //float lifeTime = cloneTimer.PS.main.startLifetime.constant * 1000;
                     AnimationCurve curve = new AnimationCurve();
                     float singleFramePercentage = 1.0f / spriteCount;
                     float currentTimePercentage = 0;
@@ -121,10 +125,11 @@ namespace EmoteRain
                             currentFramePercentage = 0;
                         }
                         curve.AddKey(currentTimePercentage, currentFramePercentage);
-                        currentTimePercentage += enhancedImageInfo.AnimControllerData.delays[frameCounter] / lifeTime;
+                        currentTimePercentage += enhancedImageInfo.AnimControllerData.delays[frameCounter] / timeForEmote;
                         currentFramePercentage += singleFramePercentage;
                     }
                     tex.frameOverTime = new ParticleSystem.MinMaxCurve(1.0f, curve);
+                    tex.cycleCount = (int)(cloneTimer.PS.main.startLifetime.constant * 1000 / timeForEmote);
                 }
                 //end of animated emotes
 
