@@ -92,7 +92,7 @@ namespace EmoteRain {
             return filteredEmotes.ToArray();
         }
 
-        private static Dictionary<String, Command> registeredCommands = new Dictionary<string, Command>();
+        internal static Dictionary<String, Command> registeredCommands = new Dictionary<string, Command>();
         private static void registerCommands()
         {
             IEnumerable<Command> commands = Extensions.GetEnumerableOfType<Command>();
@@ -100,6 +100,7 @@ namespace EmoteRain {
             {
                 registeredCommands.Add(e.trigger,e);
             }
+            Log($"{registeredCommands.Values.Count} registered commands");
         }
 
         private static bool isAllowed(int neededRank, IChatUser user)

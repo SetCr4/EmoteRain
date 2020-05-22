@@ -14,11 +14,13 @@ namespace EmoteRain
 {
     abstract class Command
     {
-        public abstract string regName { get;}
-        public abstract string trigger { get;}
+        public abstract string regName { get; }
+        public abstract string trigger { get; }
         public abstract int neededRank { get; } //needed userrank to use that command 
                                                 //(Disabled: 0; User: 1; Mods: 2; Broadcaster: 3) 
                                                 //Disable is added if the needed rank should be customizeable later on
+        public abstract string desc { get; }
+
 
         public abstract void onTrigger(IChatService svc, IChatChannel channel, string[] arg);
     }
@@ -44,6 +46,13 @@ namespace EmoteRain
             get
             {
                 return 2; //Mods and upwards
+            }
+        }
+        public override string desc
+        {
+            get
+            {
+                return "toggles rain; available args: on, off, menu, song, ";
             }
         }
 
@@ -81,6 +90,50 @@ namespace EmoteRain
                     else goto case "on";
             }
             svc.SendTextMessage(outputMsg,channel);
+        }
+    }
+
+    class Help : Command
+    {
+        public override string regName
+        {
+            get
+            {
+                return "HelpCMD";
+            }
+        }
+        public override string trigger
+        {
+            get
+            {
+                return "help";
+            }
+        }
+        public override int neededRank
+        {
+            get
+            {
+                return 1; //user
+            }
+        }
+        public override string desc
+        {
+            get
+            {
+                return "displays this helppage";
+            }
+        }
+
+        public override void onTrigger(IChatService svc, IChatChannel channel, string[] arg)
+        {
+            string outputMsg = "/me [EmoteRain-Helppage] ";
+            
+            foreach(Command e in TwitchMSGHandler.registeredCommands.Values)
+            {
+                outputMsg += $"{Settings.prefix} {e.trigger} - {e.desc} | ";
+            }
+            outputMsg += "Checkout https://github.com/SetCr4/EmoteRain/blob/master/README.md for more help!";
+            svc.SendTextMessage(outputMsg, channel);
         }
     }
 }

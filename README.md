@@ -28,6 +28,7 @@ EmoteRain needs [ChatCore](https://github.com/brian91292/ChatCore), [Enhanced St
       - `song`(toggle rain in songs), 
       - `on`(turns menu and song rain on), 
       - `off`(turns menu and song rain off)
+    - use `!er help` for a helppage
   - Even more config options
 	  - Configure the speed at which emotes fall down
   ### New in 2.0.0: 
