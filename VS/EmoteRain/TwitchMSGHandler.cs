@@ -10,6 +10,7 @@ using ChatCore.Services.Twitch;
 using static EmoteRain.Logger;
 using ChatCore;
 using ChatCore.Interfaces;
+using ChatCore.Services;
 using System.Reflection;
 
 namespace EmoteRain {
@@ -37,6 +38,7 @@ namespace EmoteRain {
 
         private static void Svc_OnTextMessageReceived(IChatService svc, IChatMessage msg)
         {
+            subHandler(msg);
             //Log($"MSG from {msg.Sender.Name} is User: {!msg.Sender.IsBroadcaster&&!msg.Sender.IsModerator}; is Mod: {msg.Sender.IsModerator}; is BC: {msg.Sender.IsBroadcaster}");
             if (msg.Message.StartsWith(Settings.prefix))
                 CMDHandler(svc, msg);
@@ -44,7 +46,48 @@ namespace EmoteRain {
                 MSGHandler(msg);
         }
 
-        private static void MSGHandler(IChatMessage twitchMsg) {
+        //handle subs?
+        private static IChatMessage lastHandledMsg;
+        //private static Dictionary<string, bool> _subHandler = new Dictionary<string, bool>();
+        private static void subHandler(IChatMessage twitchMsg)
+        {
+            if (lastHandledMsg == null)
+            {
+                lastHandledMsg = twitchMsg;
+                return;
+            }
+
+            if(lastHandledMsg.Id.Equals(twitchMsg.Id))
+            {
+                Log($"Systemmsg: {lastHandledMsg.Message}; Msg: {twitchMsg.Message}");
+                if(lastHandledMsg.Message.Contains("subscribed"))
+                {
+                    RequestCoordinator.subReceived();
+                }
+            }
+
+            lastHandledMsg = twitchMsg;
+
+            //bool s_isSubscriber = twitchMsg.Sender.AsTwitchUser().IsSubscriber;
+            //bool d_isSubscriber;
+            //if(!_subHandler.TryGetValue(twitchMsg.Sender.Id, out d_isSubscriber))
+            //{
+            //    Log("new user in _subHandler!");
+            //    d_isSubscriber = s_isSubscriber;
+            //    _subHandler.Add(twitchMsg.Sender.Id, s_isSubscriber);
+            //}
+
+            ////Log($"Sub States before dict update; Sender: {s_isSubscriber}; Dictionary: {d_isSubscriber}");
+            //if(s_isSubscriber && !d_isSubscriber)
+            //{
+            //    RequestCoordinator.subReceived();
+            //}
+            //_subHandler[twitchMsg.Sender.Id] = s_isSubscriber;
+            ////Log($"Sub States after dict update; Sender: {s_isSubscriber}; Dictionary: {d_isSubscriber}");
+        }
+
+        private static void MSGHandler(IChatMessage twitchMsg) 
+        {
             //Log("Got Twitch Msg!\nMessage: " + twitchMsg.Message);
             IChatEmote[] emoteTag = twitchMsg.Emotes; //remove filter when working with animated emotes
             if(emoteTag.Length > 0) {
@@ -53,7 +96,8 @@ namespace EmoteRain {
             } 
         }
         
-        private static void CMDHandler(IChatService svc, IChatMessage twitchMsg) {
+        private static void CMDHandler(IChatService svc, IChatMessage twitchMsg) 
+        {
             string[] msgSplited = twitchMsg.Message.Split(' ');
             Command commandToExecute = null;
             if(registeredCommands.TryGetValue(msgSplited[1], out commandToExecute))
@@ -69,7 +113,8 @@ namespace EmoteRain {
             }
         }
 
-        private static void queueEmoteSprites(IChatEmote[] unstackedEmotes) {
+        private static void queueEmoteSprites(IChatEmote[] unstackedEmotes) 
+        {
             (from iChatEmote in unstackedEmotes
                 group iChatEmote by iChatEmote.Id into emoteGrouping
                 select new { emote = emoteGrouping.First(), count = (byte)emoteGrouping.Count() }
@@ -77,7 +122,8 @@ namespace EmoteRain {
 
         }
 
-        private static IEnumerator EnqueueEmote(IChatEmote emote, byte count) {
+        private static IEnumerator EnqueueEmote(IChatEmote emote, byte count) 
+        {
             yield return null;
             RequestCoordinator.EmoteQueue(emote, count);
         }
@@ -92,7 +138,7 @@ namespace EmoteRain {
             return filteredEmotes.ToArray();
         }
 
-        internal static Dictionary<String, Command> registeredCommands = new Dictionary<string, Command>();
+        internal static Dictionary<string, Command> registeredCommands = new Dictionary<string, Command>();
         private static void registerCommands()
         {
             IEnumerable<Command> commands = Extensions.GetEnumerableOfType<Command>();

@@ -1,4 +1,5 @@
 ﻿using ChatCore.Interfaces;
+using ChatCore.Models.Twitch;
 using EnhancedStreamChat.Chat;
 using EnhancedStreamChat.Graphics;
 using System;
@@ -172,11 +173,36 @@ namespace EmoteRain
                 }
             }
         }
+
         internal static void UnregisterPS(string key, Mode mode)
         {
             UnityEngine.Object.Destroy(particleSystems[mode].Item1[key]);
             //Log("Inactive ParticleSystem. Removing...");
             particleSystems[mode].Item1.Remove(key);
+        }
+
+        internal static void subReceived()
+        {
+            Log("This should be after a received sub.");
+            TimeoutScript cloneTimer;
+            PS_Prefab_Pair ps_Prefab_Pair = particleSystems[mode];
+            cloneTimer = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2).GetComponent<TimeoutScript>();
+            var main = cloneTimer.PS.main;
+            if (mode == Mode.Menu) main.startSize = Settings.menuSize;
+            if (mode == Mode.Play) main.startSize = Settings.songSize;
+            main.startSpeed = Settings.emoteFallspeed;
+            main.startLifetime = (8 / (Settings.emoteFallspeed - 1)) + 1;
+            cloneTimer.key = "IReallyHopeNoOneWillEverUseThisKeyAsALegitEmoteName";
+            cloneTimer.mode = mode;
+            ps_Prefab_Pair.Item1.Add(cloneTimer.key, cloneTimer);
+            SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);
+
+            if (ps_Prefab_Pair.Item1.ContainsKey(cloneTimer.key))
+            {
+                cloneTimer = ps_Prefab_Pair.Item1[cloneTimer.key];
+            }
+
+            cloneTimer.Emit(20);
         }
     }
 }
