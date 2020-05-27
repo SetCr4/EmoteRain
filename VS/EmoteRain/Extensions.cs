@@ -44,7 +44,6 @@ namespace EmoteRain {
             {
                 objects.Add((T)Activator.CreateInstance(type, constructorArgs));
             }
-            objects.Sort();
             return objects;
         }
     }
