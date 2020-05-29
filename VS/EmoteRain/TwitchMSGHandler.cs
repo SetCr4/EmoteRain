@@ -12,6 +12,7 @@ using ChatCore;
 using ChatCore.Interfaces;
 using ChatCore.Services;
 using System.Reflection;
+using EmoteRain.Commands;
 
 namespace EmoteRain {
     /// <summary>
@@ -24,7 +25,7 @@ namespace EmoteRain {
 
         public static void onLoad()
         {
-            registerCommands();
+            CommandRegistration.registerCommands();
             SharedCoroutineStarter.instance.StartCoroutine(CheckChat());
         }
 
@@ -38,52 +39,25 @@ namespace EmoteRain {
 
         private static void Svc_OnTextMessageReceived(IChatService svc, IChatMessage msg)
         {
-            subHandler(msg);
-            //Log($"MSG from {msg.Sender.Name} is User: {!msg.Sender.IsBroadcaster&&!msg.Sender.IsModerator}; is Mod: {msg.Sender.IsModerator}; is BC: {msg.Sender.IsBroadcaster}");
             if (msg.Message.StartsWith(Settings.prefix))
-                CMDHandler(svc, msg);
-            else
-                MSGHandler(msg);
-        }
-
-        //handle subs?
-        private static IChatMessage lastHandledMsg;
-        //private static Dictionary<string, bool> _subHandler = new Dictionary<string, bool>();
-        private static void subHandler(IChatMessage twitchMsg)
-        {
-            if (lastHandledMsg == null)
             {
-                lastHandledMsg = twitchMsg;
+                CMDHandler(svc, msg);
                 return;
             }
+            if(Settings.subRain) SUBHandler(msg);
+            MSGHandler(msg);
+        }
 
-            if(lastHandledMsg.Id.Equals(twitchMsg.Id))
+        private static void SUBHandler(IChatMessage twitchMsg)
+        {
+            if (!twitchMsg.IsSystemMessage) return;
+
+            Log($"Received System Message: {twitchMsg.Message}");
+            if (twitchMsg.Message.StartsWith("⭐") || twitchMsg.Message.StartsWith("👑"))
             {
-                Log($"Systemmsg: {lastHandledMsg.Message}; Msg: {twitchMsg.Message}");
-                if(lastHandledMsg.Message.Contains("subscribed"))
-                {
-                    RequestCoordinator.subReceived();
-                }
+                Log($"Received System Message: {twitchMsg.Message}; Should be Sub.");
+                RequestCoordinator.subRain();
             }
-
-            lastHandledMsg = twitchMsg;
-
-            //bool s_isSubscriber = twitchMsg.Sender.AsTwitchUser().IsSubscriber;
-            //bool d_isSubscriber;
-            //if(!_subHandler.TryGetValue(twitchMsg.Sender.Id, out d_isSubscriber))
-            //{
-            //    Log("new user in _subHandler!");
-            //    d_isSubscriber = s_isSubscriber;
-            //    _subHandler.Add(twitchMsg.Sender.Id, s_isSubscriber);
-            //}
-
-            ////Log($"Sub States before dict update; Sender: {s_isSubscriber}; Dictionary: {d_isSubscriber}");
-            //if(s_isSubscriber && !d_isSubscriber)
-            //{
-            //    RequestCoordinator.subReceived();
-            //}
-            //_subHandler[twitchMsg.Sender.Id] = s_isSubscriber;
-            ////Log($"Sub States after dict update; Sender: {s_isSubscriber}; Dictionary: {d_isSubscriber}");
         }
 
         private static void MSGHandler(IChatMessage twitchMsg) 
@@ -99,12 +73,12 @@ namespace EmoteRain {
         private static void CMDHandler(IChatService svc, IChatMessage twitchMsg) 
         {
             string[] msgSplited = twitchMsg.Message.Split(' ');
-            Command commandToExecute = null;
-            if(registeredCommands.TryGetValue(msgSplited[1], out commandToExecute))
+            ERCommand commandToExecute = null;
+            if(CommandRegistration.registeredCommands.TryGetValue(msgSplited[1], out commandToExecute))
             {
                 if (isAllowed(commandToExecute.neededRank, twitchMsg.Sender))
                 {
-                    commandToExecute.onTrigger(svc, twitchMsg.Channel, msgSplited.TakeLast(msgSplited.Length - 2).ToArray());
+                    commandToExecute.onTrigger(svc, twitchMsg, msgSplited.TakeLast(msgSplited.Length - 2).ToArray());
                 }
                 else
                 {
@@ -136,17 +110,6 @@ namespace EmoteRain {
                 if(e.IsAnimated == anim) filteredEmotes.Add(e);
             }
             return filteredEmotes.ToArray();
-        }
-
-        internal static Dictionary<string, Command> registeredCommands = new Dictionary<string, Command>();
-        private static void registerCommands()
-        {
-            IEnumerable<Command> commands = Extensions.GetEnumerableOfType<Command>();
-            foreach(Command e in commands)
-            {
-                registeredCommands.Add(e.trigger,e);
-            }
-            Log($"{registeredCommands.Values.Count} registered commands");
         }
 
         private static bool isAllowed(int neededRank, IChatUser user)
