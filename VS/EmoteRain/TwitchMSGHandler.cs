@@ -104,7 +104,7 @@ namespace EmoteRain {
                     combo.Add(e.Id, new Tuple<int, int>(1,Environment.TickCount & int.MaxValue));
                 }
             }
-            return temp.ToArray();
+            return temp2.ToArray();
         }
 
         private static void MSGHandler(IChatMessage twitchMsg) 

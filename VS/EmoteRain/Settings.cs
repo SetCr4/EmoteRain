@@ -159,7 +159,7 @@ namespace EmoteRain
             {
                 if (_comboMode == null)
                 {
-                    _comboMode = Plugin.config.GetBool("Settings", "ComboMode", true, true);
+                    _comboMode = Plugin.config.GetBool("Settings", "ComboMode", false, true);
                 }
                 return _comboMode.Value;
             }
