@@ -5,6 +5,7 @@
   <slider-setting text='Emote Size in song' min='0.1' max='5' increment='.1' value='size-in-song' integer-only='false' hover-hint='Size of every emote in songs'></slider-setting>
   <slider-setting text='Delay between same emote' min='1' max='10' increment='1' value='emote-delay' integer-only='true' hover-hint='In physics frames'></slider-setting>
   <slider-setting text='Emote Fallspeed' min='0.1' max='10' increment='.1' value='emote-fallspeed' integer-only='false' hover-hint='How fast Emotes will fall'></slider-setting>
+  <bool-setting text='Combo-Mode' value='combo-mode' hover-hint='Only lets Emotes fall on Combo'></bool-setting>
   <horizontal pad="0" preferred-height="6">
     <text text="Use !er setevent in chat to set Subrain." font-size="5"/>
   </horizontal>

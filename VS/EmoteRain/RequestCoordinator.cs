@@ -209,29 +209,6 @@ namespace EmoteRain
                     SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(temp, false, emitCount));
                 }
             }
-            //TimeoutScript cloneTimer;
-            //PS_Prefab_Pair ps_Prefab_Pair = particleSystems[mode];
-            //string customEmoteID = "IReallyHopeNoOneWillEverUseThisKeyAsALegitEmoteName"; 
-
-            //if (!ps_Prefab_Pair.Item1.ContainsKey(customEmoteID))
-            //{
-            //    cloneTimer = UnityEngine.Object.Instantiate(ps_Prefab_Pair.Item2).GetComponent<TimeoutScript>();
-            //    var main = cloneTimer.PS.main;
-            //    if (mode == Mode.Menu) main.startSize = Settings.menuSize;
-            //    if (mode == Mode.Play) main.startSize = Settings.songSize;
-            //    main.startSpeed = Settings.emoteFallspeed;
-            //    main.startLifetime = (8 / (Settings.emoteFallspeed - 1)) + 1;
-            //    cloneTimer.key = customEmoteID;
-            //    cloneTimer.mode = mode;
-            //    ps_Prefab_Pair.Item1.Add(customEmoteID, cloneTimer);
-            //    SceneManager.MoveGameObjectToScene(cloneTimer.gameObject, myScene);
-            //}
-            //else
-            //{
-            //    cloneTimer = ps_Prefab_Pair.Item1[customEmoteID];
-            //}
-
-            //cloneTimer.Emit(emitCount);
         }
     }
 }

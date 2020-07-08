@@ -60,10 +60,57 @@ namespace EmoteRain {
             }
         }
 
+        private static Dictionary<string, Tuple<int,int>> combo = new Dictionary<string, Tuple<int, int>>(); // Dic<EmoteID, Tuple<ComboCount, lastSeenTickCount>>
+        private static IChatEmote[] comboHandler(IChatEmote[] es)
+        {
+            List<IChatEmote> temp = new List<IChatEmote>();
+            foreach(IChatEmote e in es)
+            {
+                bool alreadyContained = false;
+                foreach(IChatEmote e2 in temp)
+                {
+                    if(e2.Id.Equals(e.Id))
+                    {
+                        alreadyContained = true;
+                    }
+                }
+                if(!alreadyContained)
+                {
+                    temp.Add(e);
+                }
+            }
+
+            List<IChatEmote> temp2 = new List<IChatEmote>();
+            foreach (IChatEmote e in temp)
+            {
+                if(combo.ContainsKey(e.Id))
+                {
+                    if(Environment.TickCount - combo[e.Id].Item2 < 5000)
+                    {
+                        combo[e.Id] = new Tuple<int, int>(combo[e.Id].Item1 + 1, Environment.TickCount);
+                    }
+                    else
+                    {
+                        combo.Remove(e.Id);
+                    }
+
+                    if(combo[e.Id].Item1 >= 3)
+                    {
+                        temp2.Add(e);
+                    }
+                }
+                else
+                {
+                    combo.Add(e.Id, new Tuple<int, int>(1,Environment.TickCount & int.MaxValue));
+                }
+            }
+            return temp.ToArray();
+        }
+
         private static void MSGHandler(IChatMessage twitchMsg) 
         {
             //Log("Got Twitch Msg!\nMessage: " + twitchMsg.Message);
-            IChatEmote[] emoteTag = twitchMsg.Emotes; //remove filter when working with animated emotes
+            IChatEmote[] emoteTag = Settings.comboMode ? comboHandler(twitchMsg.Emotes) : twitchMsg.Emotes;
             if(emoteTag.Length > 0) {
                 //Log($"Sending {emoteTag.Length} Emotes to Emote-Queue...");
                 queueEmoteSprites(emoteTag);
