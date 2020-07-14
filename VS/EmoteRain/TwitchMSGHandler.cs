@@ -10,7 +10,9 @@ using ChatCore.Services.Twitch;
 using static EmoteRain.Logger;
 using ChatCore;
 using ChatCore.Interfaces;
+using ChatCore.Services;
 using System.Reflection;
+using EmoteRain.Commands;
 
 namespace EmoteRain {
     /// <summary>
@@ -23,7 +25,7 @@ namespace EmoteRain {
 
         public static void onLoad()
         {
-            registerCommands();
+            CommandRegistration.registerCommands();
             SharedCoroutineStarter.instance.StartCoroutine(CheckChat());
         }
 
@@ -37,14 +39,29 @@ namespace EmoteRain {
 
         private static void Svc_OnTextMessageReceived(IChatService svc, IChatMessage msg)
         {
-            //Log($"MSG from {msg.Sender.Name} is User: {!msg.Sender.IsBroadcaster&&!msg.Sender.IsModerator}; is Mod: {msg.Sender.IsModerator}; is BC: {msg.Sender.IsBroadcaster}");
             if (msg.Message.StartsWith(Settings.prefix))
+            {
                 CMDHandler(svc, msg);
-            else
-                MSGHandler(msg);
+                return;
+            }
+            if(Settings.subRain) SUBHandler(msg);
+            MSGHandler(msg);
         }
 
-        private static void MSGHandler(IChatMessage twitchMsg) {
+        private static void SUBHandler(IChatMessage twitchMsg)
+        {
+            if (!twitchMsg.IsSystemMessage) return;
+
+            Log($"Received System Message: {twitchMsg.Message}");
+            if (twitchMsg.Message.StartsWith("⭐") || twitchMsg.Message.StartsWith("👑"))
+            {
+                Log($"Received System Message: {twitchMsg.Message}; Should be Sub.");
+                RequestCoordinator.subRain();
+            }
+        }
+
+        private static void MSGHandler(IChatMessage twitchMsg) 
+        {
             //Log("Got Twitch Msg!\nMessage: " + twitchMsg.Message);
             IChatEmote[] emoteTag = twitchMsg.Emotes; //remove filter when working with animated emotes
             if(emoteTag.Length > 0) {
@@ -53,14 +70,15 @@ namespace EmoteRain {
             } 
         }
         
-        private static void CMDHandler(IChatService svc, IChatMessage twitchMsg) {
+        private static void CMDHandler(IChatService svc, IChatMessage twitchMsg) 
+        {
             string[] msgSplited = twitchMsg.Message.Split(' ');
-            Command commandToExecute = null;
-            if(registeredCommands.TryGetValue(msgSplited[1], out commandToExecute))
+            ERCommand commandToExecute = null;
+            if(CommandRegistration.registeredCommands.TryGetValue(msgSplited[1], out commandToExecute))
             {
                 if (isAllowed(commandToExecute.neededRank, twitchMsg.Sender))
                 {
-                    commandToExecute.onTrigger(svc, twitchMsg.Channel, msgSplited.TakeLast(msgSplited.Length - 2).ToArray());
+                    commandToExecute.onTrigger(svc, twitchMsg, msgSplited.TakeLast(msgSplited.Length - 2).ToArray());
                 }
                 else
                 {
@@ -69,7 +87,8 @@ namespace EmoteRain {
             }
         }
 
-        private static void queueEmoteSprites(IChatEmote[] unstackedEmotes) {
+        private static void queueEmoteSprites(IChatEmote[] unstackedEmotes) 
+        {
             (from iChatEmote in unstackedEmotes
                 group iChatEmote by iChatEmote.Id into emoteGrouping
                 select new { emote = emoteGrouping.First(), count = (byte)emoteGrouping.Count() }
@@ -77,7 +96,8 @@ namespace EmoteRain {
 
         }
 
-        private static IEnumerator EnqueueEmote(IChatEmote emote, byte count) {
+        private static IEnumerator EnqueueEmote(IChatEmote emote, byte count) 
+        {
             yield return null;
             RequestCoordinator.EmoteQueue(emote, count);
         }
@@ -90,17 +110,6 @@ namespace EmoteRain {
                 if(e.IsAnimated == anim) filteredEmotes.Add(e);
             }
             return filteredEmotes.ToArray();
-        }
-
-        internal static Dictionary<String, Command> registeredCommands = new Dictionary<string, Command>();
-        private static void registerCommands()
-        {
-            IEnumerable<Command> commands = Extensions.GetEnumerableOfType<Command>();
-            foreach(Command e in commands)
-            {
-                registeredCommands.Add(e.trigger,e);
-            }
-            Log($"{registeredCommands.Values.Count} registered commands");
         }
 
         private static bool isAllowed(int neededRank, IChatUser user)

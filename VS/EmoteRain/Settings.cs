@@ -10,7 +10,8 @@ namespace EmoteRain
 {
     internal sealed class Settings : PersistentSingleton<Settings>
     {
-        //public override string ResourceName => string.Join(".", GetType().Namespace, "Views.settings.bsml");
+        [UIAction("test-subrain")]
+        private void TestSubRainClickAction() => RequestCoordinator.subRain();
 
         [UIValue("menu-rain")]
         public static bool menuRain
@@ -41,7 +42,7 @@ namespace EmoteRain
             {
                 if (_menuSize == null)
                 {
-                    _menuSize = Plugin.config.GetFloat("Settings", "MenuSize", 0.4f, true);
+                    _menuSize = (float)Plugin.config.GetInt("Settings", "MenuSize", 4, true)/10;
                 }
                 return _menuSize.Value;
             }
@@ -49,7 +50,7 @@ namespace EmoteRain
             {
                 if (value != _menuSize.Value)
                 {
-                    Plugin.config.SetFloat("Settings", "MenuSize", value);
+                    Plugin.config.SetInt("Settings", "MenuSize", (int)(value*10));
                     _menuSize = value;
                 }
             }
@@ -82,13 +83,13 @@ namespace EmoteRain
         public static float songSize {
             get {
                 if(_songSize == null) {
-                    _songSize = Plugin.config.GetFloat("Settings", "SongSize", 0.6f, true);
+                    _songSize = (float)Plugin.config.GetInt("Settings", "SongSize", 6, true)/10;
                 }
                 return _songSize.Value;
             }
             set {
                 if(value != _songSize.Value) {
-                    Plugin.config.SetFloat("Settings", "SongSize", value);
+                    Plugin.config.SetInt("Settings", "SongSize", (int)(value*10));
                     _songSize = value;
                 }
             }
@@ -116,18 +117,78 @@ namespace EmoteRain
         public static float emoteFallspeed {
             get {
                 if(_emoteFallspeed == null) {
-                    _emoteFallspeed = Plugin.config.GetFloat("Settings", "EmoteFallspeed", 3, true);
+                    _emoteFallspeed = (float)Plugin.config.GetInt("Settings", "EmoteFallspeed", 30, true)/10;
                 }
                 return _emoteFallspeed.Value;
             }
             set {
                 if(value != _emoteFallspeed.Value) {
-                    Plugin.config.SetFloat("Settings", "EmoteFallspeed", value);
+                    Plugin.config.SetInt("Settings", "EmoteFallspeed", (int)(value * 10));
                     _emoteFallspeed = value;
                 }
             }
         }
         private static float? _emoteFallspeed;
+
+        [UIValue("sub-rain")]
+        public static bool subRain
+        {
+            get
+            {
+                if (_subRain == null)
+                {
+                    _subRain = Plugin.config.GetBool("Settings", "SubRain", true, true);
+                }
+                return _subRain.Value;
+            }
+            set
+            {
+                if (value != _subRain.Value)
+                {
+                    Plugin.config.SetBool("Settings", "SubRain", value);
+                    _subRain = value;
+                }
+            }
+        }
+        private static bool? _subRain;
+
+        public static string subrainEmotes {
+            get {
+                if(_subrainEmotes == null) {
+                    _subrainEmotes = Plugin.config.GetString("Settings", "SubrainEmotes", "", true);
+                }
+                return _subrainEmotes;
+            }
+            set {
+                if(value != _subrainEmotes) {
+                    Plugin.config.SetString("Settings", "SubrainEmotes", value);
+                    _subrainEmotes = value;
+                }
+            }
+        }
+        private static string _subrainEmotes;
+
+        [UIValue("subrain-emotecount")]
+        public static int subrainEmotecount
+        {
+            get
+            {
+                if (_subrainEmotecount == null)
+                {
+                    _subrainEmotecount = Plugin.config.GetInt("Settings", "SubrainEmotecount", 20, true);
+                }
+                return _subrainEmotecount.Value;
+            }
+            set
+            {
+                if (value != _subrainEmotecount.Value)
+                {
+                    Plugin.config.SetInt("Settings", "SubrainEmotecount", value);
+                    _subrainEmotecount = value;
+                }
+            }
+        }
+        private static int? _subrainEmotecount;
 
         //This is just here if the prefix should be customizeable later on
         //Or in other words: Doesn't do anything right now
