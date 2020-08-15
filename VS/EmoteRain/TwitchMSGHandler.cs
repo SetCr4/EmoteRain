@@ -85,16 +85,17 @@ namespace EmoteRain {
             {
                 if(combo.ContainsKey(e.Id))
                 {
-                    if(Environment.TickCount - combo[e.Id].Item2 < 5000)
+                    if(Environment.TickCount - combo[e.Id].Item2 < 5000) //later to settings.comboTimer
                     {
-                        combo[e.Id] = new Tuple<int, int>(combo[e.Id].Item1 + 1, Environment.TickCount);
+                        combo[e.Id] = new Tuple<int, int>(combo[e.Id].Item1 + 1, Environment.TickCount & int.MaxValue);
                     }
                     else
                     {
                         combo.Remove(e.Id);
+                        combo.Add(e.Id, new Tuple<int, int>(1, Environment.TickCount & int.MaxValue));
                     }
 
-                    if(combo[e.Id].Item1 >= 3)
+                    if(combo[e.Id].Item1 >= 3) //later to settings.comboCount
                     {
                         temp2.Add(e);
                     }
