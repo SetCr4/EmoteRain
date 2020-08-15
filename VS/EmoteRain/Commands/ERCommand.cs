@@ -216,7 +216,7 @@ namespace EmoteRain.Commands
         {
             get
             {
-                return $"Sets the Emotes used when someone subs. Use {Settings.prefix} setevent <event> <emotes>. Leave <emotes> empty for default.";
+                return $"Sets the Emotes used when someone subs. Use {Settings.prefix} {trigger} <event> <emotes>. Leave <emotes> empty for default.";
             }
         }
 
@@ -226,7 +226,7 @@ namespace EmoteRain.Commands
             foreach(IChatEmote e in msg.Emotes)
             {
                 if(!e.IsAnimated)
-                emoteIds += $"{e.Id} ";
+                    emoteIds += $"{e.Id} ";
             }
 
             while(emoteIds.EndsWith(" "))
@@ -249,7 +249,10 @@ namespace EmoteRain.Commands
                         svc.SendTextMessage($"Subrain set with {emoteIds.Split(' ').Length} Emotes!", msg.Channel);
                     break;
                 case "":
-                    svc.SendTextMessage($"No Event selected. Use {Settings.prefix} setevent <event> <emotes>", msg.Channel);
+                    svc.SendTextMessage($"No Event selected. Use {Settings.prefix} {trigger} <event> <emotes>", msg.Channel);
+                    break;
+                default:
+                    svc.SendTextMessage($"Selected Event not recognized. Use {Settings.prefix} {trigger} <event> <emotes>", msg.Channel);
                     break;
             }
         }

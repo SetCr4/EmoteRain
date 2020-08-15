@@ -152,6 +152,28 @@ namespace EmoteRain
         }
         private static bool? _subRain;
 
+        [UIValue("combo-mode")]
+        public static bool comboMode    
+        {
+            get
+            {
+                if (_comboMode == null)
+                {
+                    _comboMode = Plugin.config.GetBool("Settings", "ComboMode", false, true);
+                }
+                return _comboMode.Value;
+            }
+            set
+            {
+                if (value != _comboMode.Value)
+                {
+                    Plugin.config.SetBool("Settings", "ComboMode", value);
+                    _comboMode = value;
+                }
+            }
+        }
+        private static bool? _comboMode;
+
         public static string subrainEmotes {
             get {
                 if(_subrainEmotes == null) {

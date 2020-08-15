@@ -46,7 +46,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Libs\ChatCore.dll</HintPath>
     </Reference>
-    <Reference Include="EnhancedStreamChat, Version=0.0.1.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="EnhancedStreamChat, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\EnhancedStreamChat.dll</HintPath>
     </Reference>
