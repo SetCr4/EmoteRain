@@ -74,7 +74,7 @@ namespace EmoteRain
 
         private static IEnumerator<WaitUntil> WaitForCollection(string e_id, bool e_isAnimated, byte count)
         {
-            bool isManagedEmote = e_id.Equals("IReallyHopeNoOneWillEverUseThisKeyAsALegitEmoteName") ? false : true;
+            bool isManagedEmote = !e_id.Equals("IReallyHopeNoOneWillEverUseThisKeyAsALegitEmoteName");
             //Log($"in WaitForCollection with e_id {e_id} with isManaged: {isManagedEmote}");
 
             EnhancedImageInfo enhancedImageInfo = default;
