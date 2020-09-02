@@ -3,6 +3,18 @@
   <slider-setting text='Emote Size in menu' min='0.1' max='5' increment='.1' value='size-in-menu' integer-only='false' hover-hint='Size of every emote in the menu'></slider-setting>
   <bool-setting text='Rain in songs' value='song-rain' hover-hint='Enables EmoteRain in songs'></bool-setting>
   <slider-setting text='Emote Size in song' min='0.1' max='5' increment='.1' value='size-in-song' integer-only='false' hover-hint='Size of every emote in songs'></slider-setting>
-  <slider-setting text='Delay between same emote' min='1' max='100' increment='1' value='emote-delay' integer-only='true' hover-hint='In physics frames'></slider-setting>
+  <slider-setting text='Delay between same emote' min='1' max='10' increment='1' value='emote-delay' integer-only='true' hover-hint='In physics frames'></slider-setting>
   <slider-setting text='Emote Fallspeed' min='0.1' max='10' increment='.1' value='emote-fallspeed' integer-only='false' hover-hint='How fast Emotes will fall'></slider-setting>
+  <bool-setting text='Combo-Mode' value='combo-mode' hover-hint='Rain only on Emote Combo'></bool-setting>
+  <horizontal pad="0" preferred-height="6">
+    <text text="Use !er setevent in chat to set Subrain." font-size="5"/>
+  </horizontal>
+  <horizontal pad="0" preferred-height="6">
+    <text text="No Animated Emotes supported yet." font-size="5"/>
+  </horizontal>
+  <horizontal pad="1" preferred-height="8">
+    <clickable-text text='Click here to test it!' on-click='test-subrain'></clickable-text>
+  </horizontal>
+  <bool-setting text='Subrain' value='sub-rain' hover-hint='Rains Custom Emotes when someone subs'></bool-setting>
+  <slider-setting text='Subrain Emotecount' min='1' max='50' increment='1' value='subrain-emotecount' integer-only='true' hover-hint='How many of each Emote will fall'></slider-setting>
 </scrollable-settings-container>
