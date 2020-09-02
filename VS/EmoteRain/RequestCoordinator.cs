@@ -185,6 +185,8 @@ namespace EmoteRain
 
         internal static void subRain()
         {
+            if (!Settings.subRain) return;
+
             if (Settings.subrainEmotes.Equals(""))
                 customRain((byte)Settings.subrainEmotecount);
             else
