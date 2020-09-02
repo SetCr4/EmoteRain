@@ -3,9 +3,9 @@
   "id": "EmoteRain",
   "name": "EmoteRain",
   "author": "",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "",
-  "gameVersion": "1.11.0",
+  "gameVersion": "1.11.1",
   "dependsOn": {
     "ChatCore": "^1.0.0-rc5",
     "Enhanced Stream Chat": "^3.0.0-rc3",

@@ -21,7 +21,7 @@ Copy the latest EmoteRain.dll from the releases tab to your `Beat Saber\Plugins`
 EmoteRain needs [ChatCore](https://github.com/brian91292/ChatCore), [Enhanced Stream Chat v3](https://github.com/brian91292/EnhancedStreamChat-v3), BSML and BS Utils to work! Make sure they are installed!
 
   ## Newest Additions 
-  ### New in 2.1.1:
+  ### New in 2.2.0:
   - Subrain (Rains hearts if someone subs) with settings:
     - Set which Emotes are your Subrain-Emotes (Recommended: default)
     - Set how many should fall down 
