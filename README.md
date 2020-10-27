@@ -1,5 +1,5 @@
 # EmoteRain
-Download here: [![Stable Version](https://img.shields.io/badge/Stable-2.2.0-brightgreen)](https://github.com/SetCr4/EmoteRain/releases/latest)
+Download here: [![Stable Version](https://img.shields.io/badge/Stable-2.2.1-brightgreen)](https://github.com/SetCr4/EmoteRain/releases/latest)
 
 
 ## Mod Info
