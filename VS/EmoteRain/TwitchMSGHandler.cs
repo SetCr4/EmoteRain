@@ -6,11 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using ChatCore.Services.Twitch;
+using BeatSaberPlusChatCore.Services.Twitch;
 using static EmoteRain.Logger;
-using ChatCore;
-using ChatCore.Interfaces;
-using ChatCore.Services;
+using BeatSaberPlus.Utils;
+using BeatSaberPlusChatCore.Interfaces;
 using System.Reflection;
 using EmoteRain.Commands;
 
@@ -21,23 +20,14 @@ namespace EmoteRain {
     /// </summary>
     internal class TwitchMSGHandler {
 
-        private static ChatCoreInstance sc;
-
         public static void onLoad()
         {
             CommandRegistration.registerCommands();
-            SharedCoroutineStarter.instance.StartCoroutine(CheckChat());
+            //ChatService.Acquire();
+            //ChatService.Multiplexer.OnTextMessageReceived += Svc_OnTextMessageReceived;
         }
 
-        private static IEnumerator CheckChat()
-        {
-            yield return new WaitForSeconds(1);
-            sc = ChatCoreInstance.Create();
-            var svc = sc.RunTwitchServices();
-            svc.OnTextMessageReceived += Svc_OnTextMessageReceived;
-        }
-
-        private static void Svc_OnTextMessageReceived(IChatService svc, IChatMessage msg)
+        public static void Svc_OnTextMessageReceived(IChatService svc, IChatMessage msg)
         {
             if (msg.Message.StartsWith(Settings.prefix))
             {

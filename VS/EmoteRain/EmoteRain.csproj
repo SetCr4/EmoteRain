@@ -34,6 +34,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BeatSaberPlus, Version=0.0.8.0, Culture=en, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\BeatSaberPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="BeatSaberPlusChatCore, Version=1.12.3.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Libs\BeatSaberPlusChatCore.dll</HintPath>
+    </Reference>
     <Reference Include="BSML, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\BSML.dll</HintPath>
@@ -42,18 +50,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\BS_Utils.dll</HintPath>
     </Reference>
-    <Reference Include="ChatCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Libs\ChatCore.dll</HintPath>
-    </Reference>
-    <Reference Include="EnhancedStreamChat, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Plugins\EnhancedStreamChat.dll</HintPath>
-    </Reference>
     <Reference Include="HMLib, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Beat Saber_Data\Managed\HMLib.dll</HintPath>
     </Reference>
+    <Reference Include="HMUI, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Main, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Main.dll</HintPath>
@@ -78,6 +79,10 @@
       <HintPath>D:\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
       <HintPath>D:\SteamLibrary_SlowMode\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
@@ -99,6 +104,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BSP\Settings\Main.cs" />
+    <Compile Include="BSP\Settings\Credits.cs" />
+    <Compile Include="BSP\Settings\Right.cs" />
+    <Compile Include="SubRainFileManager.cs" />
     <Compile Include="Commands\ERCommand.cs" />
     <Compile Include="Commands\CommandRegistration.cs" />
     <Compile Include="Settings.cs" />
@@ -118,6 +127,9 @@
     <EmbeddedResource Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="BSP\Settings\Credits.bsml" />
+    <EmbeddedResource Include="BSP\Settings\Main.bsml" />
+    <EmbeddedResource Include="BSP\Settings\Right.bsml" />
     <None Include="BuildTargets.targets" />
     <None Include="CreateJunctions.bat" />
     <EmbeddedResource Include="Views\settings.bsml" />

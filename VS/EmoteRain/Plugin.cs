@@ -11,19 +11,30 @@ using IPALogger = IPA.Logging.Logger;
 using static EmoteRain.Logger;
 using System.Reflection;
 using System.IO;
-using BS_Utils.Utilities;
 using UnityEngine.Events;
+using BeatSaberPlus.Plugins;
+using HMUI;
+using BeatSaberMarkupLanguage;
+using BeatSaberPlusChatCore;
+using BeatSaberPlus.Utils;
 
 namespace EmoteRain
 {
 
     [Plugin(RuntimeOptions.SingleStartInit)]
-    internal class Plugin
+    internal class Plugin : PluginBase
     {
         private static bool init;
-        internal static Config config = new Config("EmoteRain");
+        internal static BS_Utils.Utilities.Config config = new BS_Utils.Utilities.Config("EmoteRain");
+        private ViewController sMain;
+        private ViewController sCredit;
+        private ViewController sRight;
 
-        internal static string Name => "EmoteRain";
+        public override string Name => "EmoteRain";
+
+        public override bool IsEnabled { get => Settings.isEnabled; set => Settings.isEnabled = value; }
+
+        public override EActivationType ActivationType => EActivationType.OnMenuSceneLoaded;
 
         [Init]
         public void Init(IPALogger logger)
@@ -64,7 +75,8 @@ namespace EmoteRain
         [OnStart]
         public void OnApplicationStart()
         {
-            BSMLSettings.instance.AddSettingsMenu("EmoteRain", "EmoteRain.Views.settings.bsml", Settings.instance);
+            SubRainFileManager.load();
+            //BSMLSettings.instance.AddSettingsMenu("EmoteRain", "EmoteRain.Views.settings.bsml", Settings.instance);
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
@@ -88,6 +100,30 @@ namespace EmoteRain
             {
                 RequestCoordinator.EnvironmentSwitched(scene.name, SceneLoadMode.Unload);
             }
+        }
+
+        protected override void OnEnable()
+        {
+            ChatService.Acquire();
+            ChatService.Multiplexer.OnTextMessageReceived += TwitchMSGHandler.Svc_OnTextMessageReceived;
+        }
+
+        protected override void OnDisable()
+        {
+            ChatService.Multiplexer.OnTextMessageReceived -= TwitchMSGHandler.Svc_OnTextMessageReceived;
+            ChatService.Release();
+        }
+
+        protected override void ShowUIImplementation()
+        {
+            if (sMain == null)
+                sMain = BeatSaberUI.CreateViewController<Main>();
+            if (sCredit == null)
+                sCredit = BeatSaberUI.CreateViewController<Credits>();
+            if (sRight == null)
+                sRight = BeatSaberUI.CreateViewController<Right>();
+
+            BeatSaberPlus.UI.ViewFlowCoordinator.Instance.ChangeMainViewController(sMain, sCredit, sRight);
         }
     }
 }

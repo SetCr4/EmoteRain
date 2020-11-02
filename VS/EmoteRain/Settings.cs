@@ -10,10 +10,8 @@ namespace EmoteRain
 {
     internal sealed class Settings : PersistentSingleton<Settings>
     {
-        [UIAction("test-subrain")]
-        private void TestSubRainClickAction() => RequestCoordinator.subRain();
+        
 
-        [UIValue("menu-rain")]
         public static bool menuRain
         {
             get
@@ -35,7 +33,6 @@ namespace EmoteRain
         }
         private static bool? _menuRain;
 
-        [UIValue("size-in-menu")]
         public static float menuSize
         {
             get
@@ -57,7 +54,6 @@ namespace EmoteRain
         }
         private static float? _menuSize;
 
-        [UIValue("song-rain")]
         public static bool songRain
         {
             get
@@ -79,7 +75,6 @@ namespace EmoteRain
         }
         private static bool? _songRain;
 
-        [UIValue("size-in-song")]
         public static float songSize {
             get {
                 if(_songSize == null) {
@@ -96,7 +91,6 @@ namespace EmoteRain
         }
         private static float? _songSize;
 
-        [UIValue("emote-delay")]
         public static int emoteDelay {
             get {
                 if(_emoteDelay == null) {
@@ -113,7 +107,6 @@ namespace EmoteRain
         }
         private static int? _emoteDelay;
         
-        [UIValue("emote-fallspeed")]
         public static float emoteFallspeed {
             get {
                 if(_emoteFallspeed == null) {
@@ -130,7 +123,6 @@ namespace EmoteRain
         }
         private static float? _emoteFallspeed;
 
-        [UIValue("sub-rain")]
         public static bool subRain
         {
             get
@@ -152,7 +144,6 @@ namespace EmoteRain
         }
         private static bool? _subRain;
 
-        [UIValue("combo-mode")]
         public static bool comboMode    
         {
             get
@@ -190,7 +181,6 @@ namespace EmoteRain
         }
         private static string _subrainEmotes;
 
-        [UIValue("subrain-emotecount")]
         public static int subrainEmotecount
         {
             get
@@ -235,5 +225,27 @@ namespace EmoteRain
             }
         }
         private static string _prefix;
+
+        public static bool isEnabled
+        {
+            get
+            {
+                if (_isEnabled == null)
+                {
+                    _isEnabled = Plugin.config.GetBool("Settings", "Enabled", false, true);
+                }
+                return _isEnabled.Value;
+            }
+            set
+            {
+                if (value != _isEnabled)
+                {
+                    Plugin.config.SetBool("Settings", "Enabled", value);
+                    _isEnabled = value;
+                }
+            }
+        }
+        private static bool? _isEnabled;
+
     }
 }

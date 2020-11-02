@@ -1,0 +1,24 @@
+<vertical child-control-height='false'>
+  <horizontal bg='panel-top' pad-left='15' pad-right='15' horizontal-fit='PreferredSize'>
+    <text text='SubRain Settings' align='Center' font-size='4.2'/>
+  </horizontal>
+  <horizontal min-width='110'>
+    <vertical spacing='0' pad-right='5' size-delta-x='65' min-width='65'>
+      <vertical size-delta-x='60' min-width='60' pad-top='2'>
+        <bool-setting text='Subrain' id='sub-rain' hover-hint='Rains Custom Emotes when someone subs'></bool-setting>
+      </vertical>
+      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
+        <slider-setting text='Subrain Emotecount' min='1' max='50' increment='1' id='subrain-emotecount' integer-only='true' hover-hint='How many of each Emote will fall'></slider-setting>
+      </vertical>
+      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
+        <text text="Use !er setevent in chat to set Subrain." font-size="5"/>
+      </vertical>
+      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
+        <text text="No Animated Emotes supported for SubRain yet." font-size="5"/>
+      </vertical>
+      <vertical size-delta-x='60' min-width='60' pad-bottom='2'>
+        <clickable-text text='Click here to test it!' on-click='test-subrain'></clickable-text>
+      </vertical>
+    </vertical>
+  </horizontal>
+</vertical>

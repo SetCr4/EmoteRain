@@ -1,7 +1,5 @@
-﻿using ChatCore.Interfaces;
-using ChatCore.Models.Twitch;
-using EnhancedStreamChat.Chat;
-using EnhancedStreamChat.Graphics;
+﻿using BeatSaberPlusChatCore.Interfaces;
+using BeatSaberPlus.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -74,9 +72,10 @@ namespace EmoteRain
 
         private static IEnumerator<WaitUntil> WaitForCollection(string e_id, bool e_isAnimated, byte count)
         {
-            bool isManagedEmote = !e_id.Equals("IReallyHopeNoOneWillEverUseThisKeyAsALegitEmoteName");
+            bool isManagedEmote = !e_id.StartsWith("SubRainSprite_");
             //Log($"in WaitForCollection with e_id {e_id} with isManaged: {isManagedEmote}");
 
+            
             EnhancedImageInfo enhancedImageInfo = default;
             if(isManagedEmote)
                 yield return new WaitUntil(() => ChatImageProvider.instance.CachedImageInfo.TryGetValue(e_id, out enhancedImageInfo) && mode != Mode.None);
@@ -207,7 +206,7 @@ namespace EmoteRain
                 {
                     string temp = e;
                     if (e.Equals(""))
-                        temp = "IReallyHopeNoOneWillEverUseThisKeyAsALegitEmoteName";
+                        temp = "SubRainSprite_";
                     SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(temp, false, emitCount));
                 }
             }
