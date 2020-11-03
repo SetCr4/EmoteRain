@@ -35,6 +35,10 @@ namespace EmoteRain
 			base.DidActivate(p_FirstActivation, p_AddedToHierarchy, p_ScreenSystemEnabling);
 			if (p_FirstActivation)
 			{
+				Color color = this.InfoBG.GetComponent<ImageView>().color;
+				color.a = 0.5f;
+				this.InfoBG.GetComponent<ImageView>().color = color;
+
 				var l_Event = new BSMLAction(this, this.GetType().GetMethod(nameof(OnSettingChanged), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic));
 
 				/// Set values
@@ -46,6 +50,8 @@ namespace EmoteRain
 				m_SREmoteCount.onChange = l_Event;
 			}
 		}
+		[UIObject("infobg")]
+		internal GameObject InfoBG;
 
 		[UIAction("test-subrain")]
 		private void TestSubRainClickAction() => RequestCoordinator.subRain();

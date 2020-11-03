@@ -2,26 +2,28 @@
   <horizontal bg='panel-top' pad-left='15' pad-right='15' horizontal-fit='PreferredSize'>
     <text text='SubRain Settings' align='Center' font-size='4.2'/>
   </horizontal>
+
   <horizontal min-width='110'>
     <vertical spacing='0' pad-right='5' size-delta-x='65' min-width='65'>
       <vertical size-delta-x='60' min-width='60' pad-top='2'>
         <bool-setting text='Subrain' id='sub-rain' hover-hint='Rains Custom Emotes when someone subs'></bool-setting>
       </vertical>
-      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
+      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='10'>
         <slider-setting text='Subrain Emotecount' min='1' max='50' increment='1' id='subrain-emotecount' integer-only='true' hover-hint='How many of each Emote will fall'></slider-setting>
       </vertical>
-      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
+      <vertical id='infobg' bg='round-rect-panel' size-delta-x='60' min-width='60' pad-top='2' pad-bottom='2' pad-left='2' pad-right='2'>
         <text text="SubRain folder is located at Beat Saber/CustomSubRain" font-size="5"/>
-      </vertical>
-      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
-        <text text="Paste in your favorite PNGs to set as SubRain! (1:1 ratio recommended)" font-size="5"/>
-      </vertical>
-      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
-        <clickable-text text="Click here to reload SubRain textures" on-click='reload-subrain'/>
-      </vertical>
-      <vertical size-delta-x='60' min-width='60' pad-bottom='2'>
-        <clickable-text text='Click here to test it!' on-click='test-subrain'></clickable-text>
+        <text text="Paste in your favorite PNGs to set as SubRain!" font-size="5"/>
+        <text text="1:1 ratio recommended" font-size="5"/>
       </vertical>
     </vertical>
+  </horizontal>
+
+  <horizontal min-height='10'>
+  </horizontal>
+
+  <horizontal horizontal-fit='PreferredSize'>
+    <button text='Reload SubRain textures' on-click='reload-subrain'></button>
+    <button text='Test it'                 on-click='test-subrain'></button>
   </horizontal>
 </vertical>
