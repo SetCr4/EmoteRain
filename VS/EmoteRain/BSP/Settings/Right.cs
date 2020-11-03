@@ -50,6 +50,9 @@ namespace EmoteRain
 		[UIAction("test-subrain")]
 		private void TestSubRainClickAction() => RequestCoordinator.subRain();
 
+		[UIAction("reload-subrain")]
+		private void ReloadSubRain() => SubRainFileManager.reload();
+
 		[UIComponent("sub-rain")]
 		public ToggleSetting m_SubRain;
 

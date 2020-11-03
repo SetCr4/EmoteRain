@@ -28,5 +28,11 @@ namespace EmoteRain
                 }
             }
         }
+
+        public static void reload()
+        {
+            SubRainTextures = new Dictionary<string, Texture2D>();
+            load();
+        }
     }
 }

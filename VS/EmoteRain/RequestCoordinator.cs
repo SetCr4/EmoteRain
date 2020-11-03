@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static EmoteRain.Logger;
 using PS_Prefab_Pair = System.ValueTuple<System.Collections.Generic.Dictionary<string, EmoteRain.TimeoutScript>, UnityEngine.GameObject>;
+using System.Linq;
 
 namespace EmoteRain
 {
@@ -135,8 +136,11 @@ namespace EmoteRain
                 //end of animated emotes
 
                 //Log("Assigning texture...");
-                if(isManagedEmote)
+                if (isManagedEmote)
                     cloneTimer.PSR.material.mainTexture = enhancedImageInfo.Sprite.texture;
+                else if (e_id.Substring(14).Length > 0)
+                    cloneTimer.PSR.material.mainTexture = SubRainFileManager.SubRainTextures[e_id.Substring(14)];
+
             }
             else
             {
@@ -186,10 +190,10 @@ namespace EmoteRain
         {
             if (!Settings.subRain) return;
 
-            if (Settings.subrainEmotes.Equals(""))
+            if (SubRainFileManager.SubRainTextures.Count == 0)
                 customRain((byte)Settings.subrainEmotecount);
             else
-                customRain(Settings.subrainEmotes.Split(' '),(byte)Settings.subrainEmotecount);
+                customRain(SubRainFileManager.SubRainTextures.Keys.ToArray(),(byte)Settings.subrainEmotecount);
         }
 
         internal static void customRain(byte emitCount)
@@ -204,9 +208,9 @@ namespace EmoteRain
             {
                 foreach (string e in emoteIds)
                 {
-                    string temp = e;
-                    if (e.Equals(""))
-                        temp = "SubRainSprite_";
+                    string temp = "SubRainSprite_" + e;
+                    //if (e.Equals(""))
+                    //    temp = "SubRainSprite_";
                     SharedCoroutineStarter.instance.StartCoroutine(WaitForCollection(temp, false, emitCount));
                 }
             }

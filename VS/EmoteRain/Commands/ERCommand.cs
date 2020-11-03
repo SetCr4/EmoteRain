@@ -209,7 +209,7 @@ namespace EmoteRain.Commands
         {
             get
             {
-                return 3; //Broadcaster
+                return 0; //None
             }
         }
         public override string desc
