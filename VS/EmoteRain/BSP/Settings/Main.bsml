@@ -19,12 +19,14 @@
       <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
         <slider-setting text='Delay between same emote' min='1' max='10' increment='1' id='emote-delay' integer-only='true' hover-hint='In physics frames'></slider-setting>
       </vertical>
-      <vertical size-delta-x='60' min-width='60' pad-top='0' pad-bottom='0'>
+      <vertical size-delta-x='60' min-width='60' pad-bottom='2'>
         <slider-setting text='Emote Fallspeed' min='0.1' max='10' increment='.1' id='emote-fallspeed' integer-only='false' hover-hint='How fast Emotes will fall'></slider-setting>
       </vertical>
-      <vertical size-delta-x='60' min-width='60' pad-bottom='2'>
-        <bool-setting text='Combo-Mode' id='combo-mode' hover-hint='Rain only on Emote Combo'></bool-setting>
-      </vertical>
     </vertical>
+  </horizontal>
+
+  <horizontal horizontal-fit='PreferredSize'>
+    <button text='SubRain Settings'   on-click='change-subrain'></button>
+    <button text='ComboMode Settings' on-click='change-combo'></button>
   </horizontal>
 </vertical>

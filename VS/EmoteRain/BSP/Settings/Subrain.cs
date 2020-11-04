@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace EmoteRain
 {
-    internal class Right : BSMLResourceViewController
+    internal class Subrain : BSMLResourceViewController
     {
         public override string ResourceName => string.Join(".", new string[]
                 {
@@ -28,6 +28,7 @@ namespace EmoteRain
 			/// Update config
 			Settings.subRain = m_SubRain.Value;
 			Settings.subrainEmotecount = (int)m_SREmoteCount.slider.value;
+
 		}
 
 		protected override void DidActivate(bool p_FirstActivation, bool p_AddedToHierarchy, bool p_ScreenSystemEnabling)

@@ -165,6 +165,48 @@ namespace EmoteRain
         }
         private static bool? _comboMode;
 
+        public static float comboTimer
+        {
+            get
+            {
+                if (_comboTimer == null)
+                {
+                    _comboTimer = (float)Plugin.config.GetInt("Settings", "ComboTimer", 30, true) / 10;
+                }
+                return _comboTimer.Value;
+            }
+            set
+            {
+                if (value != _comboTimer.Value)
+                {
+                    Plugin.config.SetInt("Settings", "ComboTimer", (int)(value * 10));
+                    _comboTimer = value;
+                }
+            }
+        }
+        private static float? _comboTimer;
+
+        public static int comboCount
+        {
+            get
+            {
+                if (_comboCount == null)
+                {
+                    _comboCount = Plugin.config.GetInt("Settings", "ComboCounter", 3, true);
+                }
+                return _comboCount.Value;
+            }
+            set
+            {
+                if (value != _comboCount.Value)
+                {
+                    Plugin.config.SetInt("Settings", "ComboCounter", value);
+                    _comboCount = value;
+                }
+            }
+        }
+        private static int? _comboCount;
+
         public static string subrainEmotes {
             get {
                 if(_subrainEmotes == null) {

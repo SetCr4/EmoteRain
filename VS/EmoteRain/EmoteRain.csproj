@@ -106,7 +106,8 @@
   <ItemGroup>
     <Compile Include="BSP\Settings\Main.cs" />
     <Compile Include="BSP\Settings\Credits.cs" />
-    <Compile Include="BSP\Settings\Right.cs" />
+    <Compile Include="BSP\Settings\Combomode.cs" />
+    <Compile Include="BSP\Settings\Subrain.cs" />
     <Compile Include="SubRainFileManager.cs" />
     <Compile Include="Commands\ERCommand.cs" />
     <Compile Include="Commands\CommandRegistration.cs" />
@@ -129,7 +130,8 @@
   <ItemGroup>
     <EmbeddedResource Include="BSP\Settings\Credits.bsml" />
     <EmbeddedResource Include="BSP\Settings\Main.bsml" />
-    <EmbeddedResource Include="BSP\Settings\Right.bsml" />
+    <EmbeddedResource Include="BSP\Settings\Subrain.bsml" />
+    <EmbeddedResource Include="BSP\Settings\Combomode.bsml" />
     <None Include="BuildTargets.targets" />
     <None Include="CreateJunctions.bat" />
     <EmbeddedResource Include="Views\settings.bsml" />

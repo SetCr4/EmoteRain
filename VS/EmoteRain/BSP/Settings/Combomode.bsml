@@ -1,0 +1,24 @@
+<vertical child-control-height='false'>
+  <horizontal bg='panel-top' pad-left='15' pad-right='15' horizontal-fit='PreferredSize'>
+    <text text='ComboMode Settings' align='Center' font-size='4.2'/>
+  </horizontal>
+
+  <horizontal min-width='110'>
+    <vertical spacing='0' pad-right='5' size-delta-x='65' min-width='65'>
+      <vertical size-delta-x='60' min-width='60' pad-top='2'>
+        <bool-setting text='Combo-Mode Toggle' id='combo-mode' hover-hint='Rain only on Emote Combo'></bool-setting>
+      </vertical>
+      <vertical size-delta-x='60' min-width='60' pad-top='2'>
+        <slider-setting text='Combo Timer' min='.1' max='20' increment='.1' id='combo-timer' integer-only='false' hover-hint='After how many seconds the combo resets'></slider-setting>
+      </vertical>
+      <vertical size-delta-x='60' min-width='60' pad-top='2' pad-bottom='4'>
+        <slider-setting text='Combo Count' min='2' max='30' increment='1' id='combo-count' integer-only='true' hover-hint='After how many emotes the combo activates'></slider-setting>
+      </vertical>
+      <vertical id='infobg2' bg='round-rect-panel' size-delta-x='60' min-width='60' pad-top='2' pad-bottom='2' pad-left='2' pad-right='2'>
+        <text text="How Combo mode works:" font-size="4"/>
+        <text text="Combo actives when the set number of emotes get spammed without interruption." font-size="3"/>
+        <text text="If the timer runs out the Combo gets reset." font-size="3"/>
+      </vertical>
+    </vertical>
+  </horizontal>
+</vertical>

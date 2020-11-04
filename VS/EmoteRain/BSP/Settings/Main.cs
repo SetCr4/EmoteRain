@@ -31,7 +31,6 @@ namespace EmoteRain
 			Settings.songSize = m_SongSize.slider.value;
 			Settings.emoteDelay = (int)m_EmoteDelay.slider.value;
 			Settings.emoteFallspeed = m_Fallspeed.slider.value;
-			Settings.comboMode = m_ComboMode.Value;
 
 		}
 
@@ -49,7 +48,6 @@ namespace EmoteRain
 				m_SongSize.slider.value = Settings.songSize;
 				m_EmoteDelay.slider.value = Settings.emoteDelay;
 				m_Fallspeed.slider.value = Settings.emoteFallspeed;
-				m_ComboMode.Value = Settings.comboMode;
 
 				/// Bind events
 				m_MenuRain.onChange = l_Event;
@@ -58,7 +56,6 @@ namespace EmoteRain
 				m_SongSize.onChange = l_Event;
 				m_EmoteDelay.onChange = l_Event;
 				m_Fallspeed.onChange = l_Event;
-				m_ComboMode.onChange = l_Event;
 			}
 		}
 
@@ -83,7 +80,10 @@ namespace EmoteRain
 		[UIComponent("emote-fallspeed")]
 		public SliderSetting m_Fallspeed;
 
-		[UIComponent("combo-mode")]
-		public ToggleSetting m_ComboMode;
+		[UIAction("change-subrain")]
+		private void ChangeViewToSubRain() => BeatSaberPlus.UI.ViewFlowCoordinator.Instance.SetRightScreen(Plugin.sSubrain);
+
+		[UIAction("change-combo")]
+		private void ChangeViewToCombo() => BeatSaberPlus.UI.ViewFlowCoordinator.Instance.SetRightScreen(Plugin.sCombo);
 	}
 }

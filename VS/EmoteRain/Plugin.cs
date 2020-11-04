@@ -26,9 +26,10 @@ namespace EmoteRain
     {
         private static bool init;
         internal static BS_Utils.Utilities.Config config = new BS_Utils.Utilities.Config("EmoteRain");
-        private ViewController sMain;
-        private ViewController sCredit;
-        private ViewController sRight;
+        public static ViewController sMain;
+        public static ViewController sCredit;
+        public static ViewController sSubrain;
+        public static ViewController sCombo;
 
         public override string Name => "EmoteRain";
 
@@ -120,10 +121,13 @@ namespace EmoteRain
                 sMain = BeatSaberUI.CreateViewController<Main>();
             if (sCredit == null)
                 sCredit = BeatSaberUI.CreateViewController<Credits>();
-            if (sRight == null)
-                sRight = BeatSaberUI.CreateViewController<Right>();
+            if (sSubrain == null)
+                sSubrain = BeatSaberUI.CreateViewController<Subrain>();
+            if (sCombo == null)
+                sCombo = BeatSaberUI.CreateViewController<Combomode>();
 
-            BeatSaberPlus.UI.ViewFlowCoordinator.Instance.ChangeMainViewController(sMain, sCredit, sRight);
+
+            BeatSaberPlus.UI.ViewFlowCoordinator.Instance.ChangeMainViewController(sMain, sCredit, sSubrain);
         }
     }
 }
